@@ -1,0 +1,8 @@
+[submodule "mfr3duo_description"]
+	path = mfr3duo_description
+	url = https://github.com/SiYueY/mfr3duo_description.git
+	branch = develop
+[submodule "mfr3duo_mujoco"]
+	path = mfr3duo_mujoco
+	url = https://github.com/SiYueY/mfr3duo_mujoco.git
+	branch = develop

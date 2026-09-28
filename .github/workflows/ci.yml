@@ -1,0 +1,76 @@
+name: colcon
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: humble
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3-colcon-common-extensions \
+            ninja-build bzip2 curl \
+            libegl1-mesa-dev libgl1-mesa-dev libglfw3-dev \
+            ros-humble-hardware-interface ros-humble-pluginlib \
+            ros-humble-rclcpp ros-humble-rclcpp-lifecycle \
+            ros-humble-moveit-ros-planning-interface ros-humble-nav2-bringup \
+            ros-humble-ament-cmake-pytest ros-humble-xacro
+
+      - uses: actions/checkout@v4
+        with:
+          repository: SiYueY/robot_mujoco
+          ref: develop
+          submodules: recursive
+          path: robot_mujoco
+
+      - name: Build and install romujoco
+        run: |
+          cd robot_mujoco/romujoco
+          ./scripts/mujoco.sh build -j 2
+          cd "$GITHUB_WORKSPACE"
+          cmake -S robot_mujoco/romujoco -B /tmp/romujoco-build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/romujoco-install" \
+            -DROMUJOCO_BUILD_TESTS=OFF
+          cmake --build /tmp/romujoco-build --parallel 2
+          cmake --install /tmp/romujoco-build
+          touch robot_mujoco/COLCON_IGNORE
+
+      - name: Verify package discovery and order
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon list --topological-order
+          python3 - <<'PY'
+          import subprocess
+          names = [line.split()[0] for line in subprocess.check_output(
+              ['colcon', 'list', '--topological-order'], text=True).splitlines()]
+          expected = {'mfr3duo_description', 'mfr3duo_mujoco',
+                      'mfr3duo_hardware', 'mfr3duo_moveit',
+                      'mfr3duo_nav', 'mfr3duo_robot'}
+          assert set(names) == expected, names
+          assert names.index('mfr3duo_description') < names.index('mfr3duo_mujoco')
+          assert names.index('mfr3duo_mujoco') < names.index('mfr3duo_hardware')
+          PY
+
+      - name: Build and test workspace
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          export CMAKE_PREFIX_PATH="$GITHUB_WORKSPACE/romujoco-install:${CMAKE_PREFIX_PATH}"
+          colcon build --symlink-install --event-handlers console_direct+
+          colcon test --event-handlers console_direct+
+          colcon test-result --verbose
