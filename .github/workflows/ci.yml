@@ -26,6 +26,12 @@ jobs:
             libegl1-mesa-dev libgl1-mesa-dev libglfw3-dev \
             ros-humble-hardware-interface ros-humble-pluginlib \
             ros-humble-rclcpp ros-humble-rclcpp-lifecycle \
+            ros-humble-controller-manager ros-humble-joint-state-broadcaster \
+            ros-humble-imu-sensor-broadcaster ros-humble-joint-trajectory-controller \
+            ros-humble-forward-command-controller ros-humble-position-controllers \
+            ros-humble-robot-state-publisher ros-humble-launch-ros \
+            ros-humble-rclpy ros-humble-ros2launch \
+            ros-humble-sensor-msgs ros-humble-std-msgs ros-humble-trajectory-msgs \
             ros-humble-moveit-ros-planning-interface ros-humble-nav2-bringup \
             ros-humble-ament-cmake-pytest ros-humble-xacro
 

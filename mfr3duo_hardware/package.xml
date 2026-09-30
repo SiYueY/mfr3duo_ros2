@@ -2,7 +2,16 @@
 <package format="3">
   <name>mfr3duo_hardware</name>
   <version>0.1.0</version>
-  <description>ROS 2 hardware integration package skeleton for Mobile FR3 Duo.</description>
+  <description>MuJoCo ros2_control hardware for Mobile FR3 Duo.</description>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>imu_sensor_broadcaster</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>forward_command_controller</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
   <maintainer email="maintainers@example.com">mfr3duo maintainers</maintainer>
   <license>Apache-2.0</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
@@ -12,6 +21,11 @@
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_lifecycle</depend>
+  <depend>sensor_msgs</depend>
+  <test_depend>rclpy</test_depend>
+  <test_depend>std_msgs</test_depend>
+  <test_depend>trajectory_msgs</test_depend>
+  <test_depend>ros2launch</test_depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>
