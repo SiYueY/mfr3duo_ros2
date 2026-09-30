@@ -33,6 +33,11 @@ if(BUILD_TESTING)
   add_executable(mfr3duo_control_cycle_benchmark test/control_cycle_benchmark.cpp)
   target_compile_features(mfr3duo_control_cycle_benchmark PRIVATE cxx_std_17)
   target_link_libraries(mfr3duo_control_cycle_benchmark mfr3duo_mujoco::mfr3duo_mujoco)
+  add_executable(mfr3duo_mujoco_system_cycle_benchmark
+    test/mujoco_system_cycle_benchmark.cpp)
+  target_compile_features(mfr3duo_mujoco_system_cycle_benchmark PRIVATE cxx_std_17)
+  target_link_libraries(mfr3duo_mujoco_system_cycle_benchmark mfr3duo_mujoco_system)
+  ament_target_dependencies(mfr3duo_mujoco_system_cycle_benchmark hardware_interface rclcpp)
   add_executable(mfr3duo_hardware_long_running_test test/long_running_test.cpp)
   target_compile_features(mfr3duo_hardware_long_running_test PRIVATE cxx_std_17)
   target_link_libraries(mfr3duo_hardware_long_running_test mfr3duo_mujoco::mfr3duo_mujoco)
@@ -44,6 +49,13 @@ if(BUILD_TESTING)
   ament_target_dependencies(mfr3duo_hardware_interface_test hardware_interface rclcpp)
   add_test(NAME mfr3duo_hardware_interface_test
     COMMAND mfr3duo_hardware_interface_test)
+  # This test links MuJoCo before Fast DDS is loaded. MuJoCo exports its bundled
+  # tinyxml2 symbols, which otherwise intercept Fast DDS's system tinyxml2 calls.
+  # The production plugin is loaded after ROS initializes its middleware.
+  find_file(MFR3DUO_SYSTEM_TINYXML2 NAMES libtinyxml2.so.9
+    PATHS /lib /usr/lib PATH_SUFFIXES ${CMAKE_LIBRARY_ARCHITECTURE} REQUIRED)
+  set_tests_properties(mfr3duo_hardware_interface_test PROPERTIES
+    ENVIRONMENT "LD_PRELOAD=${MFR3DUO_SYSTEM_TINYXML2}")
   add_executable(mfr3duo_mujoco_link_test test/link_mujoco.cpp)
   target_compile_features(mfr3duo_mujoco_link_test PRIVATE cxx_std_17)
   target_link_libraries(mfr3duo_mujoco_link_test

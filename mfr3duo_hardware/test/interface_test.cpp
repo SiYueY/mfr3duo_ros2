@@ -5,52 +5,10 @@
 #include <vector>
 
 #include "mfr3duo_hardware/mujoco_system.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "hardware_info.hpp"
 
 namespace {
-
-hardware_interface::InterfaceInfo interface(const char* name) {
-  hardware_interface::InterfaceInfo result;
-  result.name = name;
-  return result;
-}
-
-hardware_interface::ComponentInfo component(
-    const std::string& name, std::initializer_list<const char*> commands,
-    std::initializer_list<const char*> states) {
-  hardware_interface::ComponentInfo result;
-  result.name = name;
-  for (const char* item : commands) result.command_interfaces.push_back(interface(item));
-  for (const char* item : states) result.state_interfaces.push_back(interface(item));
-  return result;
-}
-
-hardware_interface::HardwareInfo make_info() {
-  hardware_interface::HardwareInfo info;
-  info.name = "MFR3DuoMujoco";
-  info.type = "system";
-  info.hardware_class_type = "mfr3duo_hardware/MujocoSystem";
-  info.hardware_parameters["simulation_steps_per_cycle"] = "2";
-  for (const char* side : {"left", "right"})
-    for (int number = 1; number <= 7; ++number)
-      info.joints.push_back(component(
-          std::string(side) + "_fr3v2_1_joint" + std::to_string(number),
-          {"position", "velocity", "effort"}, {"position", "velocity", "effort"}));
-  info.joints.push_back(component("franka_spine_vertical_joint", {"position"},
-                                  {"position", "velocity"}));
-  for (int number = 0; number < 4; ++number)
-    info.joints.push_back(component("tmrv0_2_joint_" + std::to_string(number),
-                                    {number % 2 == 0 ? "position" : "velocity"},
-                                    {"position", "velocity"}));
-  for (const char* side : {"left", "right"})
-    info.gpios.push_back(component(std::string(side) + "_gripper",
-                                   {"width", "velocity", "effort"},
-                                   {"width", "velocity", "effort", "stalled"}));
-  info.sensors.push_back(component(
-      "imu", {}, {"orientation.x", "orientation.y", "orientation.z", "orientation.w",
-                   "angular_velocity.x", "angular_velocity.y", "angular_velocity.z",
-                   "linear_acceleration.x", "linear_acceleration.y", "linear_acceleration.z"}));
-  return info;
-}
 
 bool check(bool condition, const char* message) {
   if (!condition) std::cerr << message << '\n';
@@ -59,11 +17,12 @@ bool check(bool condition, const char* message) {
 
 }  // namespace
 
-int main() {
+int main(int argc, char** argv) {
+  rclcpp::init(argc, argv);
   using hardware_interface::CallbackReturn;
   using hardware_interface::return_type;
   mfr3duo_hardware::MujocoSystem system;
-  auto info = make_info();
+  auto info = mfr3duo_hardware_test::make_info();
   auto invalid = info;
   invalid.hardware_parameters["simulation_steps_per_cycle"] = "0";
   if (!check(system.on_init(invalid) == CallbackReturn::ERROR, "invalid period accepted") ||
@@ -117,5 +76,53 @@ int main() {
           {"left_fr3v2_1_joint1/position"}) == return_type::ERROR,
           "wrong arm mode stop accepted")) return 1;
 
+  const rclcpp_lifecycle::State lifecycle_state;
+  const rclcpp::Time now;
+  const auto period = rclcpp::Duration::from_seconds(0.002);
+  mfr3duo_hardware::MujocoSystem running;
+  if (!check(running.on_init(info) == CallbackReturn::SUCCESS, "runtime init failed")) return 1;
+  if (!check(running.on_configure(lifecycle_state) == CallbackReturn::SUCCESS,
+             "runtime configure failed")) return 1;
+  auto running_commands = running.export_command_interfaces();
+  const auto command = [&](const std::string& name)
+      -> hardware_interface::CommandInterface* {
+    const auto found = std::find_if(running_commands.begin(), running_commands.end(),
+                                    [&](const auto& item) { return item.get_name() == name; });
+    return found == running_commands.end() ? nullptr : &*found;
+  };
+  auto* drive_command = command("tmrv0_2_joint_1/velocity");
+  auto* arm_command = command("left_fr3v2_1_joint1/position");
+  if (!check(drive_command != nullptr && arm_command != nullptr,
+             "runtime command interfaces missing")) return 1;
+  drive_command->set_value(2.0);
+  arm_command->set_value(1.0);
+  if (!check(running.on_activate(lifecycle_state) == CallbackReturn::SUCCESS,
+             "runtime activate failed") ||
+      !check(drive_command->get_value() == 0.0 && arm_command->get_value() != 1.0,
+             "activation retained stale commands") ||
+      !check(running.write(now, period) == return_type::OK &&
+                 running.read(now, period) == return_type::OK,
+             "active control cycle failed")) return 1;
+  if (!check(running.prepare_command_mode_switch(partial, {}) == return_type::ERROR,
+             "active partial mode switch accepted") ||
+      !check(running.write(now, period) == return_type::OK &&
+                 running.read(now, period) == return_type::OK,
+             "control cycle did not recover from rejected mode switch")) return 1;
+  drive_command->set_value(2.0);
+  if (!check(running.on_deactivate(lifecycle_state) == CallbackReturn::SUCCESS,
+             "runtime deactivate failed") ||
+      !check(drive_command->get_value() == 0.0,
+             "deactivation did not stop drive command")) return 1;
+  drive_command->set_value(2.0);
+  if (!check(running.on_activate(lifecycle_state) == CallbackReturn::SUCCESS,
+             "runtime reactivation failed") ||
+      !check(drive_command->get_value() == 0.0,
+             "reactivation retained stale drive command") ||
+      !check(running.write(now, period) == return_type::OK &&
+                 running.read(now, period) == return_type::OK,
+             "reactivated control cycle failed") ||
+      !check(running.on_cleanup(lifecycle_state) == CallbackReturn::SUCCESS,
+             "runtime cleanup failed")) return 1;
+  rclcpp::shutdown();
   return 0;
 }

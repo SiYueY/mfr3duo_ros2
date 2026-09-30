@@ -22,7 +22,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             python3-colcon-common-extensions \
-            ninja-build bzip2 curl \
+            ninja-build bzip2 curl libtinyxml2-9 \
             libegl1-mesa-dev libgl1-mesa-dev libglfw3-dev \
             ros-humble-hardware-interface ros-humble-pluginlib \
             ros-humble-rclcpp ros-humble-rclcpp-lifecycle \
@@ -38,7 +38,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: SiYueY/robot_mujoco
-          ref: develop
+          ref: c4269f0149085e549dc7834ed131a0af8847e901
           submodules: recursive
           path: robot_mujoco
 
