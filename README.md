@@ -47,8 +47,16 @@ source install/setup.bash
 ros2 launch mfr3duo_hardware mujoco_control.launch.py
 ```
 
-启动文件从 description 生成 URDF，加载一个 `MujocoSystem` 插件和关节状态、IMU、双臂轨迹、TMR 转向/驱动、脊柱控制器。可用 `ros2 control list_hardware_interfaces` 和 `ros2 control list_controllers` 检查接口与激活状态。默认控制频率 500 Hz、每周期两个 1 ms 物理步；1000 Hz 可使用 `controller_update_rate:=1000 simulation_steps_per_cycle:=1`。这些参数指定目标周期，不保证墙钟硬实时。
+启动文件从 description 生成 URDF，加载一个 `mfr3duo_hardware/Ros2ControlAdapter` 插件和关节状态、IMU、双臂轨迹、TMR 转向/驱动、脊柱控制器。可用 `ros2 control list_hardware_interfaces` 和 `ros2 control list_controllers` 检查接口与激活状态。控制频率只有 `controller_update_rate` 一个事实来源，默认 500 Hz；launch 把它换算成硬件参数 `control_period=1/controller_update_rate`，所以 1000 Hz 只需 `controller_update_rate:=1000`。这些参数指定目标周期，不保证墙钟硬实时。
 
-Camera 和 LiDAR 从同一个 MuJoCo 实例发布到 `/sensors/<device>/image_raw`、`/sensors/<device>/camera_info` 与 `/sensors/lidar_front/scan`、`/sensors/lidar_rear/scan`。当前模拟相机输出为 320×180、25 Hz。传感器桥在控制循环外发布消息。
+Camera 和 LiDAR 从同一个 MuJoCo 实例发布到 `/sensors/<device>/image_raw`、`/sensors/<device>/camera_info` 与 `/sensors/lidar_front/scan`、`/sensors/lidar_rear/scan`。当前模拟相机输出为 320×180、25 Hz。`Ros2SensorAdapter` 在控制循环外发布消息。
+
+`mfr3duo_hardware` 现在是两层：`libmfr3duo_hardware.so` 提供与 ROS 无关的 `RobotHardware` 整机 C++ API，`libmfr3duo_ros2_adapter.so` 提供 `Ros2ControlAdapter` 与 `Ros2SensorAdapter`。依赖方向固定为 `mfr3duo_ros2_adapter → mfr3duo_hardware → mfr3duo_mujoco`，Public Header 不包含任何 ROS 或 MuJoCo 类型。只安装 `robot_hardware.hpp`、`robot_types.hpp`、`visibility_control.hpp` 三个公共头文件。
+
+纯 C++ 使用者可以直接持有 `RobotHardware` 而不启动 ROS；见 `test/robot_hardware_test.cpp`。
+
+`RobotHardware` 的 motion snapshot 与生命周期状态由一把专用 mutex 保护，锁只覆盖状态检查与快照拷贝，控制路径的 `step`/`write_command` 与传感器读取都在锁外，因此控制线程与 `Ros2SensorAdapter` 线程可以并发。`test/robot_hardware_concurrency_test.cpp` 是这条契约的回归测试。`physics_period` 由 `initialize()` 从 backend 实测得出，不再在硬件层重复定义；代价是初始化时会多推进一个物理步。
+
+注意：任何同时链接 MuJoCo 再加载 ROS 2 中间件的可执行文件（例如 `mfr3duo_hardware_interface_test` 与 `mfr3duo_ros2_adapter_cycle_benchmark`）都需要 `LD_PRELOAD=/lib/x86_64-linux-gnu/libtinyxml2.so.9`，否则 MuJoCo 导出的内置 tinyxml2 符号会拦截 Fast DDS 的系统 tinyxml2 调用。CMAKE 已把这些目标注册为带该环境变量的测试，手工运行时需要自行设置。
 
 `mfr3duo_mujoco` 本次移除 `BaseCommand` / `BaseState`，改用 TMR 四主动关节及单独的被动状态 API；MFR3Duo 的 `JointControlMode` 仅保留 `Position=0`、`Velocity=1`、`Effort=2`。使用旧头文件编译的消费者必须更新源码并重新构建。`romujoco` 的通用 MobileBase 与 Hybrid 模式不变。

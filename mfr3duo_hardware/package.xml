@@ -2,7 +2,7 @@
 <package format="3">
   <name>mfr3duo_hardware</name>
   <version>0.1.0</version>
-  <description>MuJoCo ros2_control hardware for Mobile FR3 Duo.</description>
+  <description>MFR3Duo whole-robot C++ hardware API and ROS 2 adapters.</description>
   <exec_depend>xacro</exec_depend>
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>joint_state_broadcaster</exec_depend>

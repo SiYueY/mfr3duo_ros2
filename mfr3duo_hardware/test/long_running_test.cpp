@@ -1,42 +1,53 @@
+#include <chrono>
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
 
-#include "mfr3duo_mujoco/simulation.hpp"
+#include "mfr3duo_hardware/robot_hardware.hpp"
 
 int main() {
-  mfr3duo_mujoco::SimulationOptions options;
-  options.viewer_enabled = false;
-  options.camera_width = 320;
-  options.camera_height = 180;
-  options.camera_period = 0.04;
-  mfr3duo_mujoco::Simulation simulation;
-  if (!simulation.initialize(options)) return EXIT_FAILURE;
-  mfr3duo_mujoco::RobotState before;
-  if (!simulation.read_state(before)) return EXIT_FAILURE;
+    using mfr3duo_hardware::Camera;
+    using mfr3duo_hardware::CameraFrame;
+    using mfr3duo_hardware::LaserScan;
+    using mfr3duo_hardware::Lidar;
+    using mfr3duo_hardware::RobotHardware;
+    using mfr3duo_hardware::RobotHardwareOptions;
+    using mfr3duo_hardware::RobotState;
 
-  constexpr std::uint64_t kStepsPerBatch = 1000;
-  constexpr std::uint64_t kBatches = 60;
-  std::uint64_t previous_sequence = before.sequence;
-  for (std::uint64_t batch = 0; batch < kBatches; ++batch) {
-    if (!simulation.step(kStepsPerBatch)) {
-      std::cerr << "simulation step failed at batch " << batch << '\n';
-      return EXIT_FAILURE;
+    RobotHardwareOptions options;
+    options.control_period = std::chrono::milliseconds(2);
+    RobotHardware robot;
+    if (!robot.initialize(options) || !robot.activate()) return EXIT_FAILURE;
+
+    RobotState before;
+    if (!robot.read_state(before)) return EXIT_FAILURE;
+
+    constexpr std::size_t kCyclesPerBatch = 500;
+    constexpr std::uint64_t kBatches = 60;
+    std::uint64_t previous_sequence = before.sequence;
+    std::uint64_t previous_timestamp = before.timestamp_ns;
+    for (std::uint64_t batch = 0; batch < kBatches; ++batch) {
+        for (std::size_t cycle = 0; cycle < kCyclesPerBatch; ++cycle) {
+            if (!robot.update()) {
+                std::cerr << "control cycle failed at batch " << batch << '\n';
+                return EXIT_FAILURE;
+            }
+        }
+        RobotState state;
+        LaserScan lidar;
+        CameraFrame camera;
+        if (!robot.read_state(state) || !robot.read_state(Lidar::Front, lidar) ||
+            !robot.read_state(Camera::FrontColor, camera) || state.sequence <= previous_sequence ||
+            state.timestamp_ns <= previous_timestamp || lidar.ranges.empty() ||
+            camera.image.data.empty()) {
+            std::cerr << "state or sensor stream invalid at batch " << batch << '\n';
+            return EXIT_FAILURE;
+        }
+        previous_sequence = state.sequence;
+        previous_timestamp = state.timestamp_ns;
     }
-    mfr3duo_mujoco::RobotState state;
-    mfr3duo_mujoco::LaserScan lidar;
-    mfr3duo_mujoco::CameraFrame camera;
-    if (!simulation.read_state(state) ||
-        !simulation.read_state(mfr3duo_mujoco::Lidar::Front, lidar) ||
-        !simulation.read_state(mfr3duo_mujoco::Camera::FrontColor, camera) ||
-        state.sequence <= previous_sequence ||
-        state.step != (batch + 1) * kStepsPerBatch ||
-        !std::isfinite(state.simulation_time) ||
-        lidar.ranges.empty() || camera.image.data.empty()) {
-      std::cerr << "state or sensor stream invalid at batch " << batch << '\n';
-      return EXIT_FAILURE;
-    }
-    previous_sequence = state.sequence;
-  }
-  return simulation.shutdown() ? EXIT_SUCCESS : EXIT_FAILURE;
+    if (!robot.deactivate() || !robot.shutdown()) return EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }

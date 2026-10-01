@@ -2,13 +2,13 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="mfr3duo">
   <xacro:include filename="$(find mfr3duo_description)/urdf/mfr3duo.xacro"/>
   <xacro:include filename="$(find mfr3duo_hardware)/ros2_control/mfr3duo_ros2_control_macros.xacro"/>
-  <xacro:arg name="simulation_steps_per_cycle" default="1"/>
+  <xacro:arg name="control_period" default="0.002"/>
   <xacro:mfr3duo connected_to="base"/>
 
   <ros2_control name="MFR3DuoMujoco" type="system">
     <hardware>
-      <plugin>mfr3duo_hardware/MujocoSystem</plugin>
-      <param name="simulation_steps_per_cycle">$(arg simulation_steps_per_cycle)</param>
+      <plugin>mfr3duo_hardware/Ros2ControlAdapter</plugin>
+      <param name="control_period">$(arg control_period)</param>
     </hardware>
     <xacro:mfr3duo_arm_joint name="left_fr3v2_1_joint1"/>
     <xacro:mfr3duo_arm_joint name="left_fr3v2_1_joint2"/>

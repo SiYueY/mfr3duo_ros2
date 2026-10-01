@@ -2,7 +2,13 @@
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import (
+    Command,
+    FindExecutable,
+    LaunchConfiguration,
+    PathJoinSubstitution,
+    PythonExpression,
+)
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
@@ -12,12 +18,14 @@ def generate_launch_description():
     share = FindPackageShare("mfr3duo_hardware")
     xacro = PathJoinSubstitution([share, "ros2_control", "mfr3duo.ros2_control.xacro"])
     config = PathJoinSubstitution([share, "config", "controllers.yaml"])
+    # controller_update_rate is the single source of truth: the hardware control
+    # period is its reciprocal, so the two can never disagree.
+    control_period = PythonExpression(["1.0 / ", LaunchConfiguration("controller_update_rate")])
     description = Command(
         [FindExecutable(name="xacro"), " ", xacro,
-         " simulation_steps_per_cycle:=", LaunchConfiguration("simulation_steps_per_cycle")]
+         " control_period:=", control_period]
     )
     return LaunchDescription([
-        DeclareLaunchArgument("simulation_steps_per_cycle", default_value="2"),
         DeclareLaunchArgument("controller_update_rate", default_value="500"),
         Node(
             package="robot_state_publisher",

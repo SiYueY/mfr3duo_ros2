@@ -1,702 +1,701 @@
-# MFR3Duo Hardware 完整设计方案
+# mfr3duo_hardware RobotHardware 重构设计方案
 
-> 本文是设计与验收规格；各阶段的实际完成情况以代码和测试结果为准。本方案明确变更此前冻结的 `mfr3duo_mujoco` Public API；这些破坏性变更仅发生在 MFR3Duo 层，`romujoco` 保留通用能力。
+## 1. 设计目标与总体原则
 
-## 当前实施状态
+重构前 `mfr3duo_hardware` 主要以：
 
-| 阶段 | 状态 | 验证依据 |
-|---|---|---|
-| Phase 1：TMR 与 Public API | 已实现 | motor 模型、TMR 主动/被动读取、原子整机命令、standalone teleop 与安装包消费者测试 |
-| Phase 2：`MujocoSystem` | 已实现 | ros2_control 插件加载、接口检查、生命周期启动/停止及模式切换测试 |
-| Phase 3：Controllers | 已实现 | 双臂轨迹、脊柱位置、TMR 转向/驱动命令的运行集成测试 |
-| Phase 4：Sensors 与性能 | 已实现，非硬实时 | LiDAR/Camera/IMU 发布与 60 秒仿真测试通过；充分预热后控制线程在完整传感器基准中未发生 C++ `new`；500/1000 Hz 已测量，偶发墙钟超时见性能基线 |
-
-上表是当前工作区的实现状态；向其他工作区分发前，还需把两个 submodule 的变更提交并更新父仓库 gitlink。
-
-## 1. 设计目标与边界
-
-`mfr3duo_hardware` 定义为：
-
-> Mobile FR3 Duo 面向 ROS 2 的基础硬件抽象层，只暴露机器人能够直接执行或感知的基础物理能力。
-
-核心原则：
-
-```text
-Hardware exposes physical primitives,
-not robot behaviors.
+```cpp
+class MujocoSystem final
+    : public hardware_interface::SystemInterface;
 ```
 
-也就是：
+作为核心实现。
+
+> 当前实施状态：本重构已完成。`RobotHardware`、`Ros2ControlAdapter`、
+> `Ros2SensorAdapter` 均已落地，`MujocoSystem` 与 `MujocoSensorBridge` 已删除。
+> 下文出现的 `MujocoSystem` / `MujocoSensorBridge` 只用于描述重构前的状态与迁移步骤。
+
+它同时承担：
 
 ```text
-mfr3duo_hardware
-    ├── actuator command
-    ├── actuator state
-    ├── device state
-    └── raw sensor state
+MuJoCo 生命周期
+整机 Command / State
+ros2_control 接口导出
+机械臂 Command Mode Switching
+IMU 状态转换
+Camera / LiDAR ROS Topic 发布
 ```
 
-不承担：
+这种设计能够快速完成 ROS 2 集成，但存在一个长期架构问题：
+
+> MFR3Duo 的硬件能力实际上被 `ros2_control` 接口定义了。
+
+这样会导致：
 
 ```text
-IK / FK
-trajectory planning
-trajectory generation
-Cartesian planning
-Swerve IK / FK
-odometry integration
-navigation
-grasp behavior
-whole-body coordination
-MoveIt
-Nav2
-Agent logic
+直接 C++ 程序
+机器人调试工具
+Benchmark
+Agent Runtime
+未来真机 SDK
 ```
 
-完整分层：
+如果需要访问机器人，都必须绕过或者依赖 ROS 2。
+
+本次重构将这一关系反转。
+
+正式定义：
 
 ```text
-Application / Agent
-        │
-        ▼
-  mfr3duo_robot
-        │
-   ┌────┴─────┐
-   ▼          ▼
-mfr3duo_moveit   mfr3duo_nav
-   │              │
-   └──────┬───────┘
-          ▼
-   ROS Controllers
-          │
-          ▼
-   mfr3duo_hardware
-          │
-     ┌────┴────┐
-     ▼         ▼
- Real Robot   MuJoCo
-               │
-               ▼
-       mfr3duo_mujoco
-               │
-               ▼
-           romujoco
+mfr3duo_hardware::RobotHardware
 ```
 
-Franka ROS 2 是：
+为 MFR3Duo **唯一正式的整机 C++ Hardware API**。
+
+ROS 2 不再是主接口，而是 `RobotHardware` 的适配层。
+
+整体原则冻结为：
 
 ```text
-engineering reference
+RobotHardware
+    = robot hardware semantics
+
+Ros2ControlAdapter
+    = RobotHardware → ros2_control
+
+Ros2SensorAdapter
+    = RobotHardware sensors → ROS messages/topics
 ```
 
-而不是：
+核心依赖关系只能是：
 
 ```text
-compatibility target
+ROS 2
+  ↓
+RobotHardware
+  ↓
+backend
 ```
 
-采用 Franka 好的设计：
+禁止反向依赖：
 
 ```text
-✓ ros2_control SystemInterface
-✓ pluginlib
-✓ hardware lifecycle
-✓ command mode switching
-✓ joint-level actuator interface
-✓ simulation / real common contract
-✓ fixed backing storage
-✓ controller 与 hardware 分层
+RobotHardware
+  ↓
+ROS 2
 ```
 
-不采用：
+因此 `RobotHardware` Public API 不得依赖：
 
 ```text
-✗ robot_state pointer-as-double
-✗ robot_model pointer interface
-✗ Franka-specific elbow representation
-✗ 为兼容 Franka 暴露 franka_msgs
-✗ 把 Cartesian planning 塞入 hardware
-✗ 把设备历史 REST 架构当成统一机器人设计
+rclcpp
+rclcpp_lifecycle
+hardware_interface
+controller_manager
+pluginlib
+
+sensor_msgs
+geometry_msgs
+trajectory_msgs
 ```
+
+同时 Public API 也不直接暴露：
+
+```text
+mfr3duo_mujoco
+MuJoCo mjModel
+MuJoCo mjData
+Simulation
+```
+
+这些都属于内部 backend 实现。
+
+### 1.1 重构后的总体结构
+
+```text
+                    Application
+               /       |        \
+              /        |         \
+             ▼         ▼          ▼
+         Debugger   Benchmark    Agent
+              \        |         /
+               \       |        /
+                ▼      ▼       ▼
+
+                RobotHardware
+             唯一正式 C++ API
+                       │
+                       ▼
+             RobotHardware::Impl
+                       │
+                       ▼
+          mfr3duo_mujoco::Simulation
+                       │
+                       ▼
+                     MuJoCo
+```
+
+ROS 2 作为适配层：
+
+```text
+                     RobotHardware
+                    /             \
+                   /               \
+                  ▼                 ▼
+       Ros2ControlAdapter      Ros2SensorAdapter
+               │                     │
+               ▼                     ▼
+          ros2_control          ROS messages
+                                     │
+                                     ▼
+                                  Topics
+```
+
+因此：
+
+```text
+C++ API
+```
+
+是第一等接口。
+
+而：
+
+```text
+hardware_interface::SystemInterface
+ROS Topic
+ROS Message
+```
+
+都是对第一等接口的外部表示。
+
+### 1.2 本次重构不做什么
+
+此次重构不引入：
+
+```text
+IHardware
+HardwareBackend
+BackendFactory
+BackendManager
+SensorManager
+DeviceManager
+Provider
+Registry
+```
+
+也不创建复杂目录：
+
+```text
+core/
+backend/
+adapter/
+manager/
+device/
+factory/
+```
+
+当前只有一个实际 backend：
+
+```text
+mfr3duo_mujoco
+```
+
+因此使用 PImpl 隔离实现已经足够。
+
+等真实机器人 backend 真正开始开发，并出现明确的代码复用需求后，再决定是否抽象：
+
+```text
+Backend
+├── MujocoBackend
+└── RealRobotBackend
+```
+
+不能为了未来可能存在的需求提前设计一套 backend framework。
 
 ---
 
-# 2. MFR3Duo Hardware Contract
+# 2. RobotHardware Public API 与整机数据模型
 
-## 2.1 FR3 双机械臂
+`RobotHardware` 是整个 `mfr3duo_hardware` 的核心。
 
-两个 FR3 都作为标准 7-DOF joint actuator group。
-
-关节：
+建议 Public Header：
 
 ```text
-left_fr3v2_1_joint1 ... joint7
-right_fr3v2_1_joint1 ... joint7
+include/
+└── mfr3duo_hardware/
+    ├── robot_hardware.hpp
+    ├── robot_types.hpp
+    └── visibility_control.hpp
 ```
 
-每个关节：
+其中：
 
 ```text
-Command:
-    position
-    velocity
-    effort
-
-State:
-    position
-    velocity
-    effort
+robot_hardware.hpp
 ```
 
-这是 V1 唯一正式的机械臂 hardware command contract。
-
-### 不进入 Hardware
-
-以下能力全部上移：
+只负责 `RobotHardware` 主类。
 
 ```text
-Cartesian pose
-Cartesian velocity
-Cartesian trajectory
-IK
-Elbow / redundancy resolution
-PTP motion
-null-space control
-whole-body coordination
+robot_types.hpp
+```
+
+定义 `RobotHardware` 的全部 Public 数据类型：
+
+```text
+运动设备 Command / State
+IMU / LiDAR / Camera 传感器数据
+```
+
+运动类型与传感器类型同属一个 Public 数据类型头文件，在文件内按段落区分，
+不再拆分为独立的 `sensor_types.hpp`。
+
+## 2.1 RobotHardware 主接口
+
+建议接口：
+
+```cpp
+namespace mfr3duo_hardware {
+
+class RobotHardware {
+public:
+  RobotHardware();
+  ~RobotHardware();
+
+  RobotHardware(RobotHardware&&) noexcept;
+  RobotHardware& operator=(RobotHardware&&) noexcept;
+
+  RobotHardware(const RobotHardware&) = delete;
+  RobotHardware& operator=(const RobotHardware&) = delete;
+
+  bool initialize(const RobotHardwareOptions& options);
+  bool activate();
+  bool deactivate();
+  bool shutdown();
+
+  bool update();
+
+  bool write_command(const RobotCommand& command);
+
+  bool read_state(RobotState& state) const;
+  bool read_state(ImuState& state) const;
+
+  bool read_state(
+      Lidar id,
+      LaserScan& scan) const;
+
+  bool read_state(
+      Camera id,
+      CameraFrame& frame) const;
+
+private:
+  struct Impl;
+  std::unique_ptr<Impl> impl_;
+};
+
+}
+```
+
+这是唯一正式整机接口。
+
+典型使用方式：
+
+```cpp
+mfr3duo_hardware::RobotHardware robot;
+
+mfr3duo_hardware::RobotHardwareOptions options;
+options.control_period = std::chrono::milliseconds(2);
+
+if (!robot.initialize(options)) {
+  return false;
+}
+
+if (!robot.activate()) {
+  return false;
+}
+
+mfr3duo_hardware::RobotCommand command;
+mfr3duo_hardware::RobotState state;
+
+robot.write_command(command);
+robot.update();
+robot.read_state(state);
+
+robot.deactivate();
+robot.shutdown();
+```
+
+外部程序不需要知道：
+
+```text
+MuJoCo
+Simulation
+ros2_control
+controller_manager
+```
+
+## 2.2 为什么使用 update() 而不是 step()
+
+当前 MuJoCo 底层使用：
+
+```cpp
+Simulation::step(N);
+```
+
+但：
+
+```text
+step
+```
+
+是 simulation 语义，不是 robot hardware 语义。
+
+真实机器人不存在：
+
+```cpp
+robot.step();
+```
+
+如果把：
+
+```cpp
+RobotHardware::step()
+```
+
+冻结成 Public API，就会把 MuJoCo 的执行模型泄漏到未来真机接口。
+
+因此 Public API 使用：
+
+```cpp
+bool update();
+```
+
+其定义是：
+
+> 完成一次 RobotHardware 控制周期所需要的 backend 更新，并产生新的硬件状态快照。
+
+MuJoCo 中：
+
+```text
+RobotHardware::update()
+        ↓
+Simulation::step(fixed_steps)
+        ↓
+读取 coherent RobotState
+        ↓
+更新 RobotHardware snapshot
+```
+
+未来真机可以实现成：
+
+```text
+RobotHardware::update()
+        ↓
+读取驱动 / SDK / EtherCAT
+        ↓
+更新 RobotHardware snapshot
+```
+
+因此调用者不感知 backend 类型。
+
+## 2.3 RobotHardwareOptions
+
+不应该向正式 API 暴露：
+
+```text
+simulation_steps_per_cycle
+```
+
+因为这同样属于 MuJoCo 实现细节。
+
+Public API 使用：
+
+```cpp
+struct RobotHardwareOptions {
+  std::chrono::nanoseconds control_period{
+      std::chrono::milliseconds(2)};
+};
 ```
 
 例如：
 
 ```text
-Pose target
-    ↓
-MoveIt / Servo / Cartesian Controller
-    ↓
-Joint command
-    ↓
-mfr3duo_hardware
+500 Hz  → 2 ms
+1000 Hz → 1 ms
 ```
 
-而不是：
+MuJoCo backend 初始化时根据：
 
 ```text
-Pose
-    ↓
-mfr3duo_hardware
+control_period
+physics_period
 ```
 
-### TCP wrench（候选能力，暂不进入 V1）
-
-TCP wrench 可能是硬件状态，但当前没有冻结其数据来源、坐标系、符号方向、时间戳和有效性语义。真机需要确认使用 FR3 外力估计还是独立传感器；MuJoCo 需要明确使用 site force/torque sensor、接触力汇总还是其他估计方式。这些来源的物理含义不能直接视为相同。
-
-上述语义和两侧数据源通过独立验证前，不导出 `left_tcp` / `right_tcp` 正式接口。力控制、阻抗控制和接触任务仍属于上层 controller。
-
-当前 `mfr3duo_description/mjcf/mfr3duo.xml` 只有关节执行器力等相关 sensor，没有左右 TCP 的 site force / torque sensor；关节执行器力也不能直接当成 TCP wrench。MuJoCo 侧要取得可用数据，仍需新增并标定测量来源，再与真机来源核对坐标系、方向和时间戳。因此 Phase 4 的验证结论应保持“候选、未冻结”，不能以现有 joint effort 冒充完成的 wrench 接口。
-
-### Hybrid mode
-
-重构前，`mfr3duo_mujoco::JointControlMode` 包含：
+计算：
 
 ```text
-Hybrid
+steps_per_update
+```
+
+例如：
+
+```text
+physics_period = 1 ms
+control_period = 2 ms
+
+steps_per_update = 2
+```
+
+要求：
+
+```text
+control_period % physics_period == 0
+```
+
+否则：
+
+```text
+initialize() == false
+```
+
+这个计算只在初始化时完成。
+
+实现约定：
+
+```text
+physics_period ← backend
+```
+
+`physics_period` 不在 `mfr3duo_hardware` 里重复定义。`initialize()` 在
+backend 初始化之后，用一次：
+
+```text
+time() → step(1) → time()
+```
+
+的差值实测物理步长，再据此计算 `steps_per_update`。这样 backend 始终是唯一
+事实来源，也不会因为只改动 backend 而静默算错 step 数。`mfr3duo_mujoco`
+不因此新增 Public API。
+
+副作用：`initialize()` 会因此多推进一个物理步（1 ms）。`activate()` 仍然会重新
+读取状态并提交 safe hold，所以不会产生跳变。
+
+运行过程中禁止根据 wall-clock jitter 动态改变 step 数。
+
+这样仍然保持当前仿真的确定性：
+
+```text
+500 Hz → 固定推进 2 个物理步
+1000 Hz → 固定推进 1 个物理步
+```
+
+但不会把 simulation-specific 参数暴露给普通用户。
+
+---
+
+## 2.4 RobotCommand
+
+整机只保留一个正式 command path：
+
+```cpp
+bool write_command(const RobotCommand&);
+```
+
+建议：
+
+```cpp
+struct RobotCommand {
+  TmrCommand tmr;
+  SpineCommand spine;
+
+  ArmCommand left_arm;
+  ArmCommand right_arm;
+
+  GripperCommand left_gripper;
+  GripperCommand right_gripper;
+};
+```
+
+V1 不同时公开：
+
+```cpp
+write_command(const ArmCommand&);
+write_command(const TmrCommand&);
+write_command(const SpineCommand&);
+write_command(const GripperCommand&);
+```
+
+避免形成多条设备级写命令路径。
+
+正式语义：
+
+```text
+RobotCommand
+    ↓
+validate all
+    ↓
+prepare all
+    ↓
+atomic whole-robot commit
+```
+
+如果任意成员非法：
+
+```text
+RobotCommand rejected
+```
+
+不得出现：
+
+```text
+Left Arm command 已执行
+Right Arm command 已执行
+TMR command 校验失败
+Spine 仍为旧值
+```
+
+这种 partial commit。
+
+---
+
+## 2.5 Arm
+
+双机械臂继续支持：
+
+```text
 Position
 Velocity
 Effort
 ```
 
-重构后的 MFR3Duo Public API 已移除 `Hybrid`，并显式定义枚举数值：
+建议将控制模式提升到 `ArmCommand`，而不是每个 joint 单独保存：
 
 ```cpp
 enum class JointControlMode : std::uint8_t {
-    Position = 0,
-    Velocity = 1,
-    Effort = 2,
+  Position = 0,
+  Velocity = 1,
+  Effort = 2,
+};
+
+struct JointCommand {
+  double position{0.0};
+  double velocity{0.0};
+  double effort{0.0};
+};
+
+struct ArmCommand {
+  JointControlMode mode{
+      JointControlMode::Position};
+
+  std::array<JointCommand, 7> joints{};
 };
 ```
 
-`JointCommand` 移除仅用于 Hybrid 的 `stiffness` / `damping` 字段；保留 `mode`、`position`、`velocity`、`effort` 及其现有默认值。`JointState::mode` 继续保留，并从底层主动关节状态正确转换。`SpineCommand` / `SpineState` 继续是 joint alias；hardware V1 只导出 Spine position command，不能因为仿真层的类型范围更宽而额外导出速度或力命令。
+这样：
 
-这是有意的 Public API / ABI 破坏性变更：旧值为 `Hybrid=0, Position=1, Velocity=2, Effort=3`，新值不可按整数直接转发到底层。必须显式转换、更新所有消费者和测试，并在发布说明中记录迁移；已编译的旧消费者需要重新构建。
+```text
+Left  = Position
+Right = Effort
+```
 
-`romujoco::JointMode::Hybrid` 及其 `MobileBaseCommand` / `MobileBaseState` 作为通用 runtime 能力保留，不因 MFR3Duo 的契约变化而修改。阻抗或全身控制由上层 controller 计算输出到 effort interface。
+可以自然表达。
+
+而：
+
+```text
+left joint1 = Position
+left joint2 = Velocity
+```
+
+在数据结构层面就不允许出现。
+
+这比后续在 `write_command()` 内检查 7 个 joint mode 是否一致更可靠。
+
+状态：
+
+```cpp
+struct JointState {
+  double position{0.0};
+  double velocity{0.0};
+  double effort{0.0};
+};
+
+struct ArmState {
+  std::array<JointState, 7> joints{};
+};
+```
+
+Hardware 层不提供：
+
+```text
+Cartesian pose
+Cartesian velocity
+Cartesian trajectory
+IK / FK
+redundancy resolution
+PTP
+whole-body control
+```
+
+这些仍由 controller / MoveIt / upper layer 负责。
 
 ---
 
-## 2.2 TMR Mobile Base
+## 2.6 Spine
 
-这里是本次最重要的重构。
-
-重构前：
+正式 Command：
 
 ```cpp
-BaseCommand {
-    linear_x;
-    linear_y;
-    angular_z;
+struct SpineCommand {
+  double position{0.0};
 };
 ```
 
-直接删除。
-
-同时：
+State：
 
 ```cpp
-BaseState {
-    Pose;
-    Twist;
+struct SpineState {
+  double position{0.0};
+  double velocity{0.0};
 };
 ```
 
-不再作为正式 hardware state。
-
-### TMR 的真实执行器结构
-
-四个主动关节：
-
-```text
-tmrv0_2_joint_0
-    front steering
-
-tmrv0_2_joint_1
-    front drive
-
-tmrv0_2_joint_2
-    rear steering
-
-tmrv0_2_joint_3
-    rear drive
-```
-
-这与当前 `mfr3duo_description` 中的真实机械模型一致。
-
-正式 contract：
-
-```text
-tmrv0_2_joint_0:
-    Command: position
-    State:   position, velocity
-
-tmrv0_2_joint_1:
-    Command: velocity
-    State:   position, velocity
-
-tmrv0_2_joint_2:
-    Command: position
-    State:   position, velocity
-
-tmrv0_2_joint_3:
-    Command: velocity
-    State:   position, velocity
-```
-
-不暴露：
-
-```text
-vx
-vy
-wz
-```
-
-作为 hardware command。
-
-### Swerve 控制属于上层
-
-正确链路：
-
-```text
-geometry_msgs/Twist
-        │
-        ▼
-MFR3Duo Swerve Controller
-        │
-        ├── front steering position
-        ├── front drive velocity
-        ├── rear steering position
-        └── rear drive velocity
-        │
-        ▼
-mfr3duo_hardware
-```
-
-反馈：
-
-```text
-TMR joint states
-        │
-        ▼
-Swerve FK
-        │
-        ▼
-vx / vy / wz
-        │
-        ▼
-Odometry
-```
-
-所以：
-
-```text
-Swerve IK
-Swerve FK
-cmd_vel timeout
-speed limiter
-odometry
-TF publishing
-```
-
-全部不属于 hardware。
-
-Franka 的 TMR 也采用 steering-position / drive-velocity 的底层接口，并把 SwerveDriveController 独立在 hardware 之外；这里采用的是它的分层思想，而不是其完整 API。
-
-### Passive joints
-
-MFR3Duo 模型还有：
-
-```text
-rocker_arm_joint
-
-caster_front_left_steering_joint
-caster_front_left_joint
-
-caster_rear_right_steering_joint
-caster_rear_right_joint
-```
-
-这些没有 command，只存在：
-
-```text
-State:
-    position
-    velocity
-```
-
-MuJoCo 可以提供这些状态。
-
-真机如果没有传感器，则不存在对应 state source。
-
-因此定义为 `simulation auxiliary state`，经独立 `read_state(TmrPassiveState&)` 读取；它们不进入 `TmrState`、`RobotState` 或上层控制器依赖的 common contract。
-
----
-
-## 2.3 Spine
-
-Spine 的物理模型是：
-
-```text
-franka_spine_vertical_joint
-```
-
-一个 prismatic joint：
-
-```text
-range:
-    0.0 → 0.85 m
-```
-
-Hardware 层应该把它看成物理执行轴，而不是：
-
-```text
-MoveAbsolute behavior
-REST device
-```
-
-但这里需要尊重真实硬件能力。
-
-V1 建议正式 contract：
-
-```text
-franka_spine_vertical_joint
-
-Command:
-    position
-
-State:
-    position
-    velocity
-```
-
-暂时不导出：
+V1 不提供：
 
 ```text
 velocity command
 effort command
 ```
 
-原因不是 MuJoCo 做不到，而是当前 Franka Spine 真机公开接口主要是 profile position motion；在没有确认真实设备支持 cyclic velocity / effort command 前，不应该让 simulation capability 反过来扩大 hardware contract。
+原因是 common hardware contract 应由真实设备能力决定，而不是 MuJoCo 能力决定。
 
-如果以后真实驱动确认支持：
-
-```text
-continuous velocity control
-```
-
-再增加：
+高级行为：
 
 ```text
-velocity command
-```
-
-### 高级 Spine 行为
-
-这些全部属于上层：
-
-```text
-move_absolute()
-move_to_height()
-trajectory
+move_absolute
+move_to_height
+velocity profile
 acceleration profile
-deceleration profile
-halt policy
-automatic recovery
+halt
+recovery
 ```
 
-而 hardware 可以额外提供：
-
-```text
-enabled
-fault
-ready
-limit
-```
-
-等真实设备状态。
+也不属于 `RobotHardware`。
 
 ---
 
-## 2.4 Gripper
+## 2.7 TMR
 
-Gripper 与普通 revolute/prismatic joint 不同。
-
-其真实控制 primitive 更接近：
-
-```text
-opening width
-velocity
-force
-```
-
-因此保留当前 semantic direction。
-
-每个 Gripper：
-
-```text
-Command:
-    width
-    velocity
-    effort
-
-State:
-    width
-    velocity
-    effort
-    stalled
-```
-
-推荐 ros2_control 表达为 GPIO/custom interfaces：
-
-```text
-left_gripper/width
-left_gripper/velocity
-left_gripper/effort
-
-right_gripper/width
-right_gripper/velocity
-right_gripper/effort
-```
-
-状态：
-
-```text
-left_gripper/width
-left_gripper/velocity
-left_gripper/effort
-left_gripper/stalled
-```
-
-而 URDF 中：
-
-```text
-finger_joint1
-finger_joint2
-```
-
-仍然用于：
-
-```text
-robot model
-RViz
-MoveIt
-collision
-```
-
-上层 Gripper Controller 负责：
-
-```text
-width
-   ↓
-finger joint representation
-```
-
-以及：
-
-```text
-open()
-close()
-move()
-grasp()
-```
-
-这些行为。
-
-Hardware 不负责：
-
-```text
-homing policy
-grasp detection policy
-goal tolerance
-action lifecycle
-```
-
----
-
-## 2.5 Sensors
-
-传感器同样只提供 raw physical data。
-
-### IMU
-
-IMU 是固定大小数据，可以使用标准 ros2_control sensor interfaces：
-
-```text
-imu/orientation.x
-imu/orientation.y
-imu/orientation.z
-imu/orientation.w
-
-imu/angular_velocity.x
-imu/angular_velocity.y
-imu/angular_velocity.z
-
-imu/linear_acceleration.x
-imu/linear_acceleration.y
-imu/linear_acceleration.z
-```
-
-然后由标准 broadcaster 发布：
-
-```text
-sensor_msgs/msg/Imu
-```
-
-### LiDAR
-
-LiDAR 是变长数据：
-
-```text
-sensor_msgs/msg/LaserScan
-```
-
-不应该塞入：
-
-```text
-StateInterface<double>
-```
-
-MuJoCo sensor bridge 读取：
-
-```cpp
-mfr3duo_mujoco::LaserScan
-```
-
-直接转换为 ROS `LaserScan`。
-
-### Camera
-
-同理：
-
-```text
-sensor_msgs/msg/Image
-sensor_msgs/msg/CameraInfo
-```
-
-Camera 不进入 ros2_control realtime scalar interface。
-
-LiDAR / Camera bridge 必须读取 `MujocoSystem` 持有的**同一** `Simulation` 实例，不能自行初始化第二个 MuJoCo 仿真。桥接采集和 ROS 发布在控制循环之外的工作线程执行；插件停用时先停止并等待该线程，再关闭仿真。消息保留设备 `frame_id`、图像编码、相机标定和扫描参数，并按样本 `sequence` 去重。仿真时间与 ROS `Header.stamp` 的映射须明确，不能直接把底层单调时钟时间戳当成 ROS 时间。
-
-当前桥接在每轮采集时以 ROS 当前时间减去仿真当前时间计算偏移，再将样本的仿真纳秒时间戳加到该偏移上；同一轮的各传感器因此共用时间基准。这样仿真慢于墙钟时，消息仍接近实际发布时间，但跨采集轮的时间差会受仿真与墙钟速率差影响。该映射不提供 `/clock`；需要严格模拟时间的应用应切换到完整的 `/clock` 方案。
-
-Camera 消息使用模型的 optical frame。桥接沿用底层计算的 K/P 内参；对底层未填的 depth-only `CameraInfo` 宽高，从实际 depth image 补齐，并为无畸变的 MuJoCo pinhole 相机填充零畸变和单位阵 R。运行集成测试检查 RGB 图像、depth CameraInfo 尺寸与内参、LiDAR 扫描和 IMU 消息。
-
-Hardware 只负责：
-
-```text
-frame acquisition
-timestamp
-transport
-```
-
-不负责：
-
-```text
-detection
-depth fusion
-tracking
-VIO
-```
-
----
-
-# 3. mfr3duo_mujoco 同步重构
-
-`mfr3duo_mujoco` 必须和新的底层 contract 对齐。`romujoco` 继续保留通用 `Joint`、`MobileBase`、`Gripper` 和传感器能力；本节只修改 MFR3Duo 模型与适配层。
-
-## 3.1 删除 Base API
-
-删除：
-
-```cpp
-struct BaseCommand;
-struct BaseState;
-```
-
-以及：
-
-```cpp
-bool write_command(const BaseCommand&);
-bool read_state(BaseState&) const;
-```
-
-`RobotCommand`：
-
-```cpp
-BaseCommand base;
-```
-
-也删除。
-
-`RobotState`：
-
-```cpp
-BaseState base;
-```
-
-同样删除。
-
-不保留 deprecated alias，也不增加兼容 shim。这一 clean break 会影响现有 standalone teleop、示例、安装包消费者和 base 相关测试；Phase 1 必须同步迁移并复测，不能只修改头文件。现有 teleop 的底盘按键仍产生 `vx / vy / wz` 意图，迁移时须在 teleop 或上层控制器转换为 TMR steering / drive 目标，不再直接写 `BaseCommand`。
-
----
-
-## 3.2 新增 TMR actuator API
-
-建议：
+正式 command：
 
 ```cpp
 struct TmrCommand {
-    double front_steering_position{0.0};
-    double front_drive_velocity{0.0};
+  double front_steering_position{0.0};
+  double front_drive_velocity{0.0};
 
-    double rear_steering_position{0.0};
-    double rear_drive_velocity{0.0};
+  double rear_steering_position{0.0};
+  double rear_drive_velocity{0.0};
 };
 ```
 
@@ -704,761 +703,1070 @@ struct TmrCommand {
 
 ```cpp
 struct TmrState {
-    double timestamp{0.0};
+  JointState front_steering;
+  JointState front_drive;
 
-    JointState front_steering;
-    JointState front_drive;
-
-    JointState rear_steering;
-    JointState rear_drive;
+  JointState rear_steering;
+  JointState rear_drive;
 };
 ```
 
-被动状态使用不带控制模式的独立类型：
-
-```cpp
-struct PassiveJointState {
-    double position{0.0};
-    double velocity{0.0};
-};
-
-struct TmrPassiveState {
-    double timestamp{0.0};
-    PassiveJointState rocker_arm;
-    PassiveJointState front_caster_steering;
-    PassiveJointState front_caster_wheel;
-    PassiveJointState rear_caster_steering;
-    PassiveJointState rear_caster_wheel;
-};
-```
-
-底层被动关节的 `romujoco::JointMode::None` 不得转换成 MFR3Duo 的 `Position`。`TmrState` 只含四个主动关节；`TmrPassiveState` 是独立的仿真辅助读取结果。
-
-### Public Simulation API
-
-调整为：
-
-```cpp
-bool write_command(const TmrCommand& command);
-
-bool read_state(TmrState& state) const;
-bool read_state(TmrPassiveState& state) const;
-```
-
-整机：
-
-```cpp
-struct RobotCommand {
-    TmrCommand tmr;
-    SpineCommand spine;
-    ArmCommand left_arm;
-    ArmCommand right_arm;
-    GripperCommand left_gripper;
-    GripperCommand right_gripper;
-};
-```
-
-状态：
-
-```cpp
-struct RobotState {
-    std::uint64_t sequence{0};
-    std::uint64_t timestamp{0};
-    double simulation_time{0.0};
-    std::uint64_t step{0};
-
-    TmrState tmr;
-    SpineState spine;
-    ArmState left_arm;
-    ArmState right_arm;
-    GripperState left_gripper;
-    GripperState right_gripper;
-};
-```
-
-仍然保持：
-
-> coherent whole-robot active-motion snapshot
-
-`RobotState` 从同一份底层 `romujoco::RobotState` 提取主动运动设备；不逐设备拼接，也不复制被动 TMR、IMU、Camera 或 LiDAR 数据。`RobotCommand` 一次转换并提交一份完整底层命令，设备级写入仍是局部更新。ROS 2 对外使用分散 scalar interface，不改变仿真层的整机快照语义。
-
----
-
-## 3.3 不再使用 `romujoco::SwerveMobileBase`
-
-重构前：
+Hardware API 不接受：
 
 ```text
-mfr3duo_mujoco
-    ↓
-romujoco::SwerveMobileBase
-    ↓
-PlanarTwist
+vx
+vy
+wz
+geometry_msgs/Twist
 ```
 
-重构后：
+正确控制链：
 
 ```text
-mfr3duo_mujoco
-    ↓
-4 × romujoco::Joint
+cmd_vel
+   ↓
+Swerve Controller
+   ↓
+Swerve IK
+   ↓
+TmrCommand
+   ↓
+RobotHardware
 ```
 
-即：
+反馈：
 
 ```text
-tmrv0_2_joint_0
-    JointMode::Position
-
-tmrv0_2_joint_1
-    JointMode::Velocity
-
-tmrv0_2_joint_2
-    JointMode::Position
-
-tmrv0_2_joint_3
-    JointMode::Velocity
-```
-
-重构前的 MJCF 使用 MuJoCo 原生 position / velocity servo：
-
-```text
-tmrv0_2_joint_0_position
-tmrv0_2_joint_1_velocity
-tmrv0_2_joint_2_position
-tmrv0_2_joint_3_velocity
-```
-
-`romujoco::Joint` 自身按目标模式计算控制量，并把结果写入其 actuator；不能未经验证就把上述原生 servo 直接挂到 `Joint` 上。Phase 1 必须在 `mfr3duo.xml` 与 `franka_tmr.xml` 中把这四个 actuator 改为基础 motor / effort actuator，同时更新 `mfr3duo_mujoco` 的 component 配置、名称映射和相关测试：
-
-```text
-front steering / rear steering: allowed_modes = {Position}
-front drive / rear drive:       allowed_modes = {Velocity}
-```
-
-需验证 motor 控制量、限幅、方向和停止保持行为，再固定增益。`romujoco::Joint`、`romujoco::MobileBase` 的通用抽象不改。
-
-Generic：
-
-```cpp
-romujoco::MobileBase
-```
-
-可以继续存在供其他机器人使用。
-
-只是：
-
-```text
-MFR3Duo 不再使用它。
-```
-
-这是比修改 generic `romujoco` 更合理的边界。
-
----
-
-## 3.4 TMR component IDs 重构
-
-重构前：
-
-```text
-0      spine
-1..7   left arm
-8..14  right arm
-15..19 passive TMR
-```
-
-建议重新整理为语义明确的 ID：
-
-```cpp
-namespace joint {
-
-inline constexpr JointId kSpine = 0;
-
-inline constexpr std::array<JointId, 7>
-    kLeftArm{1,2,3,4,5,6,7};
-
-inline constexpr std::array<JointId, 7>
-    kRightArm{8,9,10,11,12,13,14};
-
-namespace tmr {
-
-inline constexpr JointId kFrontSteering = 15;
-inline constexpr JointId kFrontDrive = 16;
-inline constexpr JointId kRearSteering = 17;
-inline constexpr JointId kRearDrive = 18;
-
-inline constexpr JointId kFrontCasterSteering = 19;
-inline constexpr JointId kFrontCasterWheel = 20;
-inline constexpr JointId kRockerArm = 21;
-inline constexpr JointId kRearCasterSteering = 22;
-inline constexpr JointId kRearCasterWheel = 23;
-
-}
-
-}
-```
-
-不要继续保留：
-
-```cpp
-namespace mobile_base
-```
-
-因为 MFR3Duo 不再注册 MobileBase component；`romujoco` 的 MobileBase 类型仍然存在。
-
----
-
-## 3.5 Ground Truth
-
-不建议现在增加：
-
-```cpp
-BaseGroundTruth
-```
-
-作为正式 Public API。
-
-因为当前设计目标是：
-
-```text
-robot hardware semantics
-```
-
-不是：
-
-```text
-simulation debug API
-```
-
-以后确实需要：
-
-```text
-perfect pose
-perfect velocity
-contact truth
-```
-
-再单独建立明确的：
-
-```text
-simulation diagnostics
-```
-
-API。
-
-不要混入 `RobotState`。
-
----
-
-# 4. mfr3duo_hardware 实现设计
-
-## 4.1 MuJoCo 使用一个 SystemInterface
-
-MuJoCo 中整个机器人共享：
-
-```text
-mjModel
-mjData
-physics step
-```
-
-因此 V1 使用：
-
-```cpp
-class MujocoSystem final
-    : public hardware_interface::SystemInterface;
-```
-
-一个 hardware plugin。
-
-它管理：
-
-```text
-14 arm joints
-1 spine joint
-4 TMR active joints
-2 grippers
-IMU
-```
-
-Camera / LiDAR 通过辅助 bridge 发布。
-
-真机未来不要求必须也是一个 SystemInterface。
-
-例如以后完全可以是：
-
-```text
-LeftArmSystem
-RightArmSystem
-TmrSystem
-SpineSystem
-```
-
-只要它们导出的 **hardware contract 相同**。
-
-所以：
-
-> common contract 不等于 common implementation topology。
-
----
-
-## 4.2 ros2_control Xacro
-
-建议：
-
-```text
-mfr3duo_hardware/
-└── ros2_control/
-    ├── mfr3duo.ros2_control.xacro
-    └── mfr3duo_ros2_control_macros.xacro
-```
-
-Macro：
-
-```text
-arm_joint
-spine_joint
-tmr_steering_joint
-tmr_drive_joint
-gripper
-imu
-```
-
-不要复制 robot links/joints。
-
-机械模型继续全部来自：
-
-```text
-mfr3duo_description
-```
-
-Hardware Xacro 只描述：
-
-```text
-command interfaces
-state interfaces
-hardware plugin
-hardware parameters
-```
-
----
-
-## 4.3 建议的 package 结构
-
-```text
-mfr3duo_hardware/
-├── CMakeLists.txt
-├── package.xml
-├── mfr3duo_hardware.xml
-│
-├── include/
-│   └── mfr3duo_hardware/
-│       ├── mujoco_system.hpp
-│       ├── interface_names.hpp
-│       └── visibility_control.hpp
-│
-├── src/
-│   ├── mujoco_system.cpp
-│   └── mujoco_sensor_bridge.cpp
-│
-├── ros2_control/
-│   ├── mfr3duo.ros2_control.xacro
-│   └── mfr3duo_ros2_control_macros.xacro
-│
-└── test/
-    ├── interface_test.cpp
-    ├── lifecycle_test.cpp
-    ├── mode_switch_test.cpp
-    ├── command_test.cpp
-    └── simulation_test.cpp
-```
-
-不要增加：
-
-```text
-backend/
-adapter/
-factory/
-manager/
-device/
-mapping/
-```
-
-除非实现后确实出现重复职责。
-
----
-
-# 5. Runtime 与控制时序
-
-## 5.1 Lifecycle
-
-```text
-on_init()
-    │
-    ├── parse HardwareInfo
-    ├── validate joint names
-    └── validate interface contract
-
-on_configure()
-    │
-    └── Simulation::initialize()
-
-on_activate()
-    │
-    ├── read initial state
-    ├── initialize every RobotCommand member from current state
-    └── zero velocity / effort command
-
-read()
-    │
-    ├── Simulation::step(N)
-    ├── read RobotState
-    └── copy to ros2_control backing storage
-
-controller_manager.update()
-    │
-    ▼
-
-write()
-    │
-    ├── build RobotCommand
-    └── Simulation::write_command()
-
-on_deactivate()
-    │
-    └── safe command
-
-on_cleanup()
-    │
-    └── Simulation::shutdown()
-
-on_error() / on_shutdown()
-    │
-    ├── stop sensor bridge
-    └── Simulation::shutdown()
-```
-
-MuJoCo 使用：
-
-```cpp
-Simulation::step()
-```
-
-而不是：
-
-```cpp
-Simulation::start()
-```
-
-固定 step 数使仿真推进量可重复，并使命令在下一次 `read()` 步进中生效；这不等于保证墙钟实时性。`read()` 步进或快照读取失败、`write()` 整机提交被拒绝时，接口应返回错误并按生命周期错误路径处理，不能发布部分命令或沿用未定义状态。
-
----
-
-## 5.2 控制周期
-
-当前 MJCF：
-
-```text
-physics timestep = 1 ms
-```
-
-即：
-
-```text
-1000 Hz physics
-```
-
-Hardware parameter：
-
-```text
-simulation_steps_per_cycle
-```
-
-例如：
-
-```text
-controller = 1000 Hz
-steps_per_cycle = 1
-
-controller = 500 Hz
-steps_per_cycle = 2
-```
-
-不要根据每周期 wall-clock jitter 动态计算 step 数。
-
----
-
-## 5.3 Activate 时安全初始化
-
-### Arms
-
-```text
-position command = current position
-velocity command = 0
-effort command   = 0
-```
-
-### TMR
-
-```text
-front steering command = current steering
-rear steering command  = current steering
-
-front drive velocity = 0
-rear drive velocity  = 0
-```
-
-### Spine
-
-```text
-position command = current position
-```
-
-### Gripper
-
-```text
-width command = current width
-velocity = 0
-effort = 0
-```
-
-防止 controller activate 后突然跳变。首次 `write()` 前必须初始化完整 `RobotCommand`，因为整机写入会提交所有成员，包括保持默认值的成员。停用、模式切换失败和重新激活时也要定义安全命令与状态恢复；这些行为需要 lifecycle 测试覆盖。
-
----
-
-## 5.4 Arm command mode switching
-
-左右 Arm 独立：
-
-```text
-Left:
-    Position / Velocity / Effort
-
-Right:
-    Position / Velocity / Effort
-```
-
-允许：
-
-```text
-Left  = Position
-Right = Effort
-```
-
-但不允许一个 Arm 内：
-
-```text
-joint1 = position
-joint2 = velocity
+TmrState
+   ↓
+Swerve FK
+   ↓
+vx / vy / wz
+   ↓
+Odometry
 ```
 
 因此：
 
+```text
+Swerve IK
+Swerve FK
+Odometry
+cmd_vel timeout
+speed limiting
+TF publishing
+```
+
+均不属于 `RobotHardware`。
+
+Passive TMR joint 也不进入真机 / 仿真的 common RobotState。
+
+如果 MuJoCo 调试确实需要：
+
+```text
+rocker_arm
+caster steering
+caster wheel
+```
+
+可以继续作为 simulation diagnostic capability 保留在 `mfr3duo_mujoco`，但不进入 `RobotHardware` V1。
+
+---
+
+## 2.8 Gripper
+
+保持现有物理语义：
+
 ```cpp
-prepare_command_mode_switch()
+struct GripperCommand {
+  double width{0.0};
+  double velocity{0.0};
+  double effort{0.0};
+};
 ```
 
-必须验证整组 7 joints。
-
-TMR 不需要 mode switching：
-
-```text
-steering = fixed Position
-drive    = fixed Velocity
+```cpp
+struct GripperState {
+  double width{0.0};
+  double velocity{0.0};
+  double effort{0.0};
+  bool stalled{false};
+};
 ```
 
-Spine V1：
+Hardware 负责：
 
 ```text
-fixed Position
+width
+velocity
+effort
+stalled
+```
+
+不负责：
+
+```text
+open()
+close()
+grasp()
+homing
+goal tolerance
+grasp detection policy
+ROS action lifecycle
+```
+
+这些由 Gripper Controller 负责。
+
+---
+
+## 2.9 RobotState
+
+整机状态：
+
+```cpp
+struct RobotState {
+  std::uint64_t sequence{0};
+  std::uint64_t timestamp_ns{0};
+
+  TmrState tmr;
+  SpineState spine;
+
+  ArmState left_arm;
+  ArmState right_arm;
+
+  GripperState left_gripper;
+  GripperState right_gripper;
+};
+```
+
+`RobotState` 定义为：
+
+> 同一次 `RobotHardware::update()` 产生的 coherent whole-robot active motion snapshot。
+
+不包含：
+
+```text
+IMU
+LiDAR
+Camera
+TMR passive joints
+simulation time
+simulation step
+```
+
+主要原因是 Camera、LiDAR、IMU 的采样节奏与运动设备不一定一致。
+
+特别是：
+
+```text
+simulation_time
+simulation_step
+```
+
+属于仿真诊断，而不是机器人的 common hardware state。
+
+以后如有需要，可以在 `mfr3duo_mujoco` 中保留：
+
+```text
+SimulationDiagnostics
+```
+
+但不进入 `RobotHardware::RobotState`。
+
+---
+
+# 3. 传感器 API 与时间模型
+
+IMU、LiDAR 和 Camera 不应该首先被定义成 ROS Topic。
+
+它们首先是：
+
+```text
+RobotHardware C++ data API
+```
+
+这些类型与运动设备的 Command / State 一起定义在同一个 Public 类型头文件：
+
+```text
+include/mfr3duo_hardware/robot_types.hpp
+```
+
+文件内按段落区分运动类型与传感器类型。
+
+ROS Topic 只是其中一种输出方式。
+
+## 3.1 IMU
+
+定义：
+
+```cpp
+struct Vector3 {
+  double x{0.0};
+  double y{0.0};
+  double z{0.0};
+};
+
+struct Quaternion {
+  double x{0.0};
+  double y{0.0};
+  double z{0.0};
+  double w{1.0};
+};
+
+struct ImuState {
+  std::uint64_t sequence{0};
+  std::uint64_t timestamp_ns{0};
+
+  Quaternion orientation;
+  Vector3 angular_velocity;
+  Vector3 linear_acceleration;
+};
+```
+
+读取：
+
+```cpp
+ImuState imu;
+
+if (!robot.read_state(imu)) {
+  ...
+}
+```
+
+IMU 的 C++ API 是源接口。
+
+ROS 2 可以随后转换：
+
+```text
+ImuState
+   ↓
+Ros2ControlAdapter
+   ↓
+10 × StateInterface<double>
+   ↓
+IMUSensorBroadcaster
+   ↓
+sensor_msgs/msg/Imu
+```
+
+因此继续使用标准 `IMUSensorBroadcaster` 没有问题。
+
+关键区别在于：
+
+> IMU 的本体接口是 `ImuState`，而不是 ROS Topic。
+
+---
+
+## 3.2 LiDAR
+
+ID：
+
+```cpp
+enum class Lidar : std::uint8_t {
+  Front,
+  Rear,
+};
+```
+
+数据：
+
+```cpp
+struct LaserScan {
+  std::uint64_t sequence{0};
+  std::uint64_t timestamp_ns{0};
+
+  std::string frame_id;
+
+  float angle_min{0.0F};
+  float angle_max{0.0F};
+  float angle_increment{0.0F};
+
+  float time_increment{0.0F};
+  float scan_time{0.0F};
+
+  float range_min{0.0F};
+  float range_max{0.0F};
+
+  std::vector<float> ranges;
+  std::vector<float> intensities;
+};
+```
+
+调用：
+
+```cpp
+LaserScan scan;
+
+robot.read_state(
+    Lidar::Front,
+    scan);
+```
+
+不把 LiDAR 放进：
+
+```cpp
+hardware_interface::StateInterface<double>
+```
+
+因为它是变长数据。
+
+非法 ID（超出 `Lidar` 枚举范围的 `static_cast`）必须让 `read_state()` 返回
+`false`，不得静默回退到 `Front` 或 `Rear`。
+
+---
+
+## 3.3 Camera
+
+Camera ID：
+
+```cpp
+enum class Camera : std::uint8_t {
+  FrontColor,
+  FrontDepth,
+
+  RearColor,
+  RearDepth,
+
+  LeftColor,
+  LeftDepth,
+
+  RightColor,
+  RightDepth,
+
+  LeftWristColor,
+  LeftWristDepth,
+
+  RightWristColor,
+  RightWristDepth,
+
+  HeadZedLeft,
+  HeadZedRight,
+};
+```
+
+图像类型使用 C++ 自有结构，例如：
+
+```cpp
+struct Image {
+  std::uint32_t width{0};
+  std::uint32_t height{0};
+  std::uint32_t step{0};
+
+  std::string encoding;
+
+  bool is_bigendian{false};
+
+  std::vector<std::uint8_t> data;
+};
+```
+
+CameraInfo：
+
+```cpp
+struct CameraInfo {
+  std::uint32_t width{0};
+  std::uint32_t height{0};
+
+  std::string distortion_model;
+
+  std::vector<double> d;
+
+  std::array<double, 9> k{};
+  std::array<double, 9> r{};
+  std::array<double, 12> p{};
+
+  std::uint32_t binning_x{0};
+  std::uint32_t binning_y{0};
+};
+```
+
+CameraFrame：
+
+```cpp
+struct CameraFrame {
+  std::uint64_t sequence{0};
+  std::uint64_t timestamp_ns{0};
+
+  std::string frame_id;
+  std::string optical_frame_id;
+
+  Image image;
+  CameraInfo camera_info;
+};
+```
+
+`CameraFrame` 只保留一个 `image`。backend 对深度流把图像放在自己的 depth
+image 中，因此实现约定为：
+
+```text
+Camera::*Depth  → backend depth image
+其余 Camera ID  → backend colour image
+```
+
+两者都映射到同一个 `CameraFrame::image`。`camera_info` 按 backend 原值映射，
+不在这里改写尺寸。
+
+非法 ID（超出 `Camera` 枚举范围的 `static_cast`）必须让 `read_state()` 返回
+`false`，不得静默回退到 `FrontColor`。
+
+调用：
+
+```cpp
+CameraFrame frame;
+
+robot.read_state(
+    Camera::FrontColor,
+    frame);
+```
+
+Public API 中不能出现：
+
+```cpp
+sensor_msgs::msg::Image
+sensor_msgs::msg::CameraInfo
+```
+
+---
+
+## 3.4 Timestamp
+
+Public API 不使用：
+
+```cpp
+rclcpp::Time
+```
+
+统一使用：
+
+```cpp
+std::uint64_t timestamp_ns;
+```
+
+表示 backend 统一时间基准下的纳秒时间。
+
+MuJoCo 当前使用：
+
+```text
+simulation monotonic time
+```
+
+未来真机应使用：
+
+```text
+hardware monotonic timestamp
+```
+
+或统一映射后的 monotonic robot timestamp。
+
+ROS 时间转换属于：
+
+```text
+Ros2ControlAdapter
+Ros2SensorAdapter
+```
+
+的职责。
+
+即：
+
+```text
+RobotHardware timestamp
+           ↓
+ROS Adapter
+           ↓
+builtin_interfaces/Time
+           ↓
+Header.stamp
+```
+
+Public Hardware API 不依赖 ROS clock。
+
+---
+
+# 4. 生命周期、控制周期和线程模型
+
+RobotHardware 必须拥有自己的生命周期，而不是把生命周期语义交给 ros2_control。
+
+## 4.1 生命周期
+
+冻结：
+
+```text
+Uninitialized
+      │
+ initialize()
+      ▼
+   Inactive
+      │
+  activate()
+      ▼
+    Active
+      │
+ deactivate()
+      ▼
+   Inactive
+      │
+ shutdown()
+      ▼
+Uninitialized
+```
+
+### initialize()
+
+负责：
+
+```text
+创建 backend
+初始化 MuJoCo Simulation
+加载模型
+检查 control_period
+计算固定 update step 数
+初始化传感器资源
+创建内部状态 buffer
+获取初始状态
+```
+
+成功后进入：
+
+```text
+Inactive
+```
+
+### activate()
+
+进入 Active 前必须先获得有效状态。
+
+随后构造 safe initial command。
+
+Arm：
+
+```text
+position = current position
+velocity = 0
+effort   = 0
+```
+
+Spine：
+
+```text
+position = current position
+```
+
+TMR：
+
+```text
+front steering = current position
+rear steering  = current position
+
+front drive = 0
+rear drive  = 0
 ```
 
 Gripper：
 
 ```text
-fixed semantic interfaces
+width    = current width
+velocity = 0
+effort   = 0
 ```
+
+这样 controller 或直接 C++ 用户激活后不会产生突然跳变。
+
+### deactivate()
+
+必须先提交安全命令：
+
+```text
+arms:
+    hold current position / zero velocity / zero effort
+
+spine:
+    hold position
+
+TMR:
+    hold steering
+    zero drive
+
+gripper:
+    hold current width
+```
+
+随后停止接受正常运动命令。
+
+### shutdown()
+
+负责：
+
+```text
+处于 Active 时先 best-effort 提交安全停机命令
+停止后台 sensor task
+等待必要线程退出
+关闭 Simulation
+释放 backend resource
+清理 internal state
+```
+
+安全停机命令失败也必须继续释放资源，并最终回到：
+
+```text
+Uninitialized
+```
+
+绝不把对象留在 `Active`。返回值为各步骤的综合结果。析构函数同样走这条路径，
+不绕开 `RobotHardware` 自己的生命周期语义。
+
+重复 `shutdown()` 不应该产生 undefined behavior。
 
 ---
 
-# 6. 开发顺序与验收
+## 4.2 update / write / read 顺序
 
-建议拆成四阶段，但每个阶段都必须完整可运行。
-
-### Phase 1 — 重构 `mfr3duo_mujoco` 底盘
-
-完成：
+推荐周期：
 
 ```text
-删除 BaseCommand / BaseState
-
-删除 MFR3Duo 对 romujoco::MobileBase 的使用
-
-将 MFR3Duo MJCF 的 4 个 TMR 原生 servo 改为 motor，并配置 4 个 TMR active Joint 的固定 allowed_modes
-
-新增 TmrCommand / TmrState
-新增独立 TmrPassiveState 与读取 API
-
-移除 MFR3Duo JointControlMode::Hybrid 和 JointCommand 的 stiffness / damping；显式重映射 P/V/E 数值，保留 JointState::mode
-
-修改 RobotCommand / RobotState，保留 sequence、timestamp、simulation_time、step
+write_command(previous/new command)
+            │
+            ▼
+         update()
+            │
+            ▼
+      backend progresses
+            │
+            ▼
+    refresh RobotState
+            │
+            ▼
+       read_state()
 ```
 
-并保证 standalone test 全部通过。
-
-验收：
-
-```text
-front steering position command works
-rear steering position command works
-
-front drive velocity command works
-rear drive velocity command works
-
-motor 控制方向、位置 / 速度限幅、零速停车和转向保持均符合预期
-stopped / fixed-step 后，RobotState 中全部主动设备状态与同一步的设备级读取一致
-all passive joint states readable through the separate API
-passive None mode is never reported as Position
-whole-robot command is submitted once; rejected commands cause no partial update
-新枚举的数值与默认 Position 通过静态断言和运行测试验证
-standalone teleop 的 Twist 意图已转为 TMR 关节目标；示例、测试及安装包消费者已迁移并通过
-```
-
----
-
-### Phase 2 — `MujocoSystem`
-
-实现：
-
-```text
-SystemInterface
-pluginlib
-lifecycle
-arm P/V/E
-spine position
-TMR interfaces
-gripper interfaces
-IMU state
-```
-
-验证：
-
-```bash
-ros2 control list_hardware_interfaces
-```
-
-接口必须精确符合设计。
-
----
-
-### Phase 3 — Controllers 集成验证
-
-此阶段不是把 controller 写进 hardware，而是验证 hardware 足够通用。
-
-至少使用：
-
-```text
-JointStateBroadcaster
-
-JointTrajectoryController
-    left arm
-    right arm
-
-ForwardCommandController
-    TMR steering / drive test
-
-Spine position controller
-```
-
-验证：
-
-```text
-controller
-    ↓
-ros2_control
-    ↓
-mfr3duo_hardware
-    ↓
-mfr3duo_mujoco
-```
-
-链路完整。
-
-之后再在上层实现：
-
-```text
-Swerve controller
-Gripper controller
-```
-
----
-
-### Phase 4 — Sensors 与性能收敛
-
-增加：
-
-```text
-LiDAR bridge
-Camera bridge
-
-TCP wrench 仅做数据来源和语义验证；不加入 V1 正式接口
-
-500 / 1000 Hz benchmark
-allocation audit
-long-running test
-```
-
-实时路径：
+在 ros2_control 中实际会映射为：
 
 ```text
 read()
+    ↓
+RobotHardware::update()
+    ↓
+RobotHardware::read_state()
+
+controller_manager.update()
+    ↓
+controllers compute command
+
 write()
+    ↓
+RobotHardware::write_command()
 ```
 
-要求：
+这意味着：
 
-```text
-no repeated heap allocation
-no blocking ROS calls
-no publisher work
-no file I/O
-```
+> 当前 `write()` 写入的命令在下一轮 `update()` 时被 backend 执行。
 
-验收时须测量完整调用链，包括 `mfr3duo_mujoco` 与 `romujoco`。底层命令和状态缓冲复用未被读者持有的快照；读者长期持有所有预分配快照时，缓冲区仍会增长以保持已发布快照不可变。Camera 渲染和 LiDAR 射线计算在各自工作线程执行；物理线程提交的是同一时刻的 MuJoCo 状态副本，LiDAR 工作线程使用独立 `mjData`。相机批次在前一批结果消费后才重新提交，避免控制线程处理被覆盖的渲染结果。基准测试分别记录完整周期耗时、控制线程 C++ `new` 和所有线程 C++ `new`；这些计数不覆盖 C `malloc`、GPU 或驱动分配，也不代替 ROS 调度延迟测量。
-
-### 当前性能基线（2026-09-30，本机 headless 测量）
-
-构建测试目标后，在已经加载 ROS 2 与 colcon 工作区环境的终端运行构建目录中的 `mfr3duo_hardware/mfr3duo_control_cycle_benchmark`；`--no-sensors`、`--no-camera`、`--no-lidar`、`--no-imu` 可分别关闭对应传感器以定位耗时。每组预热 1000 次并测量 1000 次 `write_command(RobotCommand) → step(N) → read_state(RobotState) → read_state(ImuState)`；关闭 IMU 时跳过 IMU 读取。结果如下，单位为微秒；超时表示单次耗时超过目标周期，不代表 ROS 调度周期。全传感器数据是三次独立进程测量的范围：
-
-另有 `mfr3duo_hardware/mfr3duo_mujoco_system_cycle_benchmark` 直接测量硬件插件的完整 `read() → write()` 路径。它在 1000 Hz 与 500 Hz 配置下各预热、测量 1000 次，并分别统计当前控制线程和进程所有线程的 C++ `new` 调用。本机使用的 MuJoCo 库导出与 Fast DDS 系统库同名的 tinyxml2 符号，直接链接的测试程序需要先加载系统 tinyxml2；运行此基准时设置 `LD_PRELOAD=/lib/x86_64-linux-gnu/libtinyxml2.so.9`。硬件接口的 CTest 已设置相同的测试进程环境。生产插件由 ROS 加载，运行时集成测试另行覆盖其加载路径。
-
-| 配置 | 平均 | p99 | 最大 | 超时次数 / 1000 |
-|---|---:|---:|---:|---:|
-| 1000 Hz，Camera/LiDAR/IMU 开 | 234–243 | 278–385 | 423–628 | 0、0、0 |
-| 500 Hz，Camera/LiDAR/IMU 开 | 458–486 | 531–1430 | 671–2403 | 0、0、1 |
-| 1000 Hz，传感器关 | 232 | 275 | 361 | 0 |
-| 500 Hz，传感器关 | 455 | 508 | 574 | 0 |
-
-完整硬件插件路径的本机单次进程测量（单位：微秒）：
-
-| `MujocoSystem` 周期 | 平均 | p99 | 最大 | 超时次数 / 1000 | 控制线程 C++ `new` | 所有线程 C++ `new` |
-|---|---:|---:|---:|---:|---:|---:|
-| 1000 Hz | 231.1 | 265.2 | 417.7 | 0 | 0 | 3289 |
-| 500 Hz | 463.6 | 533.0 | 668.0 | 0 | 0 | 6364 |
-
-同一分配审计中，1000 次连续整机写入、1000 次连续运动状态读取，以及充分预热后的 1000 次全传感器完整控制周期，在控制线程上均记录为 0 次 C++ `operator new`。临时 glibc `malloc/calloc/realloc` 拦截诊断在一次全传感器进程中也记录为控制线程 0 次调用；诊断代码未加入产品或基准目标。相机/LiDAR 工作线程仍需为图像和扫描数据分配：上述三个全传感器 1000/500 Hz 组的所有线程合计约 352–381/702–746 次 C++ `new`；关闭全部传感器时为 0。该结果不覆盖 GPU、驱动或其他分配器。三个全传感器进程中有一次 500 Hz 周期超过 2 ms；随后五次独立进程测量在 500/1000 Hz 均为 0 次超时、控制线程 C++ `new` 为 0。当前不能承诺无超时或硬实时。
-
-分项测量中，关闭 Camera、保留 LiDAR/IMU 时，1000/500 Hz 组平均约 233/451 µs，均无超时，控制线程 C++ `new` 为 0；关闭 LiDAR、保留 Camera/IMU 时约 235/460 µs，也均无超时、控制线程 C++ `new` 为 0。异步 LiDAR 扫描使用复制的物理状态和独立 `mjData`，扫描时间戳取该状态的仿真时间；消费者可能在下一次传感器周期才收到已完成的扫描。
-
-长时间仿真测试 `mfr3duo_hardware_long_running_test` 在启用 Camera、LiDAR、IMU 后推进 60,000 个 1 ms 物理步（60 秒仿真时间），每 1000 步检查整机快照序列、步数及 LiDAR/Camera 非空样本；本次构建用时约 15 秒，通过。该测试证明此配置在上述时长内持续运行，不证明硬实时或无限时长稳定性。
+这与现有固定步进仿真语义一致。
 
 ---
 
-## 最终 V1 Hardware Contract
+## 4.3 Sensor 并发
 
-最终可以把 `mfr3duo_hardware` V1 冻结成非常简单的一张表：
+控制路径：
 
-| 设备 | Command | State |
+```text
+update()
+write_command()
+read_state(RobotState)
+```
+
+属于控制线程。
+
+而：
+
+```text
+read_state(Camera, ...)
+read_state(Lidar, ...)
+```
+
+可能来自 `Ros2SensorAdapter` 的独立线程。
+
+因此 `RobotHardware` 必须支持：
+
+```text
+control update
+      ||
+sensor snapshot read
+```
+
+并发。
+
+实现约定：
+
+```text
+motion snapshot + lifecycle
+        ↓
+   专用 mutex
+```
+
+`RobotState` 快照与生命周期状态由同一把专用 mutex 保护，锁只覆盖"检查状态"和
+"拷贝快照"两段极短区间，绝不跨越 backend 调用（`step` / `write_command` /
+传感器读取）。Camera 与 LiDAR 读取不经过这把锁，因此不会被控制周期串行化。
+
+`Ros2SensorAdapter` 读 `RobotState`（用于时间基准）与控制线程 `update()` 写快照
+之间的竞争，正是由这把锁消除的。
+
+但不要求生命周期接口：
+
+```text
+initialize
+activate
+deactivate
+shutdown
+```
+
+可以与 control / sensor API 并发调用。
+
+调用者必须保证生命周期操作串行。
+
+不建议在 `RobotHardware` 外层增加一个全局 mutex：
+
+```text
+update
+camera
+lidar
+```
+
+全部互斥。
+
+应该继续复用当前 `mfr3duo_mujoco` 已经形成的：
+
+```text
+coherent snapshot
+camera worker
+lidar worker
+independent mjData
+```
+
+机制。
+
+目标是：
+
+```text
+Camera / LiDAR
+```
+
+不能阻塞主控制周期。
+
+---
+
+## 4.4 Error semantics
+
+正式 API V1 可以继续使用：
+
+```cpp
+bool
+```
+
+而不是现在立即引入：
+
+```text
+expected<T,E>
+Result<T>
+ErrorCode framework
+exception hierarchy
+```
+
+但要明确：
+
+```text
+false
+```
+
+代表该次操作未成功完成。
+
+`write_command()` 返回 false 时：
+
+```text
+新的整机命令没有被部分提交。
+```
+
+`update()` 返回 false 时：
+
+```text
+不得把未完成更新产生的中间数据作为新 RobotState 发布。
+```
+
+`read_state()` 返回 false 时：
+
+```text
+调用方不得假设 output 已更新。
+```
+
+如果未来错误处理确实变复杂，再演进 Result 类型。
+
+---
+
+# 5. ROS 2 Adapter 设计
+
+ROS 2 integration 统一使用：
+
+```text
+Adapter
+```
+
+命名。
+
+不再使用：
+
+```text
+MujocoSystem
+RosSensorBridge
+```
+
+最终：
+
+```text
+Ros2ControlAdapter
+Ros2SensorAdapter
+```
+
+两者命名和职责完全对称。
+
+---
+
+## 5.1 Ros2ControlAdapter
+
+定义：
+
+```cpp
+class Ros2ControlAdapter final
+    : public hardware_interface::SystemInterface;
+```
+
+它虽然需要实现：
+
+```cpp
+hardware_interface::SystemInterface
+```
+
+但这个继承关系只是为了让：
+
+```text
+controller_manager
+pluginlib
+```
+
+加载。
+
+它不是第二套 Hardware API。
+
+内部：
+
+```cpp
+class Ros2ControlAdapter final
+    : public hardware_interface::SystemInterface {
+public:
+  ...
+
+private:
+  RobotHardware robot_;
+
+  RobotState robot_state_;
+  ImuState imu_state_;
+  RobotCommand robot_command_;
+
+  // ros2_control backing storage
+  ...
+};
+```
+
+它绝对不能直接持有：
+
+```cpp
+mfr3duo_mujoco::Simulation
+```
+
+也不能直接调用：
+
+```cpp
+Simulation::step()
+Simulation::read_state()
+Simulation::write_command()
+```
+
+所有机器人访问必须经过：
+
+```cpp
+RobotHardware
+```
+
+---
+
+## 5.2 ROS lifecycle 映射
+
+`on_init()`：
+
+```text
+解析 HardwareInfo
+校验 joint / GPIO / sensor interface
+读取 ROS adapter 配置
+```
+
+此时不创建或启动机器人。
+
+ros2_control 侧的硬件参数冻结为：
+
+```text
+control_period
+```
+
+它是秒的十进制字符串，例如 `0.002`。旧的：
+
+```text
+simulation_steps_per_cycle
+```
+
+不再存在。launch 从：
+
+```text
+controller_update_rate
+```
+
+推导：
+
+```text
+control_period = 1 / controller_update_rate
+```
+
+因此 500 Hz 对应 `0.002`，1000 Hz 对应 `0.001`，控制频率只有一个事实来源。
+不是 1 ms 整数倍、非正或无法解析的 `control_period` 依次在 `on_init()` 与
+`on_configure()` 处失败。
+
+`on_configure()`：
+
+```text
+RobotHardware::initialize()
+```
+
+`on_activate()`：
+
+```text
+RobotHardware::activate()
+        ↓
+read RobotState
+        ↓
+初始化 ros2_control command backing storage
+```
+
+`read()`：
+
+```text
+RobotHardware::update()
+        ↓
+read_state(RobotState)
+        ↓
+read_state(ImuState)
+        ↓
+copy to ros2_control state storage
+```
+
+`write()`：
+
+```text
+ros2_control command storage
+        ↓
+RobotCommand
+        ↓
+RobotHardware::write_command()
+```
+
+`on_deactivate()`：
+
+```text
+RobotHardware::deactivate()
+```
+
+`on_cleanup()`：
+
+```text
+RobotHardware::shutdown()
+```
+
+`on_shutdown()` / `on_error()`：
+
+同样进入安全停止并释放资源。
+
+---
+
+## 5.3 Command Mode Switching
+
+以下接口仍然只属于：
+
+```text
+Ros2ControlAdapter
+```
+
+```cpp
+prepare_command_mode_switch()
+perform_command_mode_switch()
+```
+
+因为它们处理的是：
+
+```text
+ros2_control resource claiming
+```
+
+而不是底层机器人生命周期。
+
+例如 controller 要从：
+
+```text
+left_arm position
+```
+
+切到：
+
+```text
+left_arm effort
+```
+
+Ros2ControlAdapter 负责验证：
+
+```text
+7 个 left arm joint 是否一起切换
+是否出现 mixed interface
+stop/start resource 是否完整
+```
+
+通过后转换为：
+
+```cpp
+robot_command_.left_arm.mode =
+    JointControlMode::Effort;
+```
+
+RobotHardware 本身不需要知道：
+
+```text
+start_interfaces
+stop_interfaces
+controller claiming
+```
+
+它只理解：
+
+```text
+ArmCommand.mode
+```
+
+这种机器人语义。
+
+---
+
+## 5.4 ros2_control Contract 保持不变
+
+此次重构不改变当前已经完成的 ros2_control interface contract。
+
+继续保持：
+
+| Device | Command | State |
 |---|---|---|
 | Left FR3 ×7 | position / velocity / effort | position / velocity / effort |
 | Right FR3 ×7 | position / velocity / effort | position / velocity / effort |
@@ -1470,44 +1778,1091 @@ no file I/O
 | Left Gripper | width / velocity / effort | width / velocity / effort / stalled |
 | Right Gripper | width / velocity / effort | width / velocity / effort / stalled |
 | IMU | — | orientation / angular velocity / acceleration |
-| LiDAR | — | LaserScan |
-| Camera | — | Image / CameraInfo |
 
-TCP wrench 是候选能力，待数据来源、坐标系、符号方向、时间戳和有效性语义验证后另行设计。被动 TMR 关节状态仅为仿真辅助数据，不属于上表的真机 / 仿真共同契约。
-
-明确不属于 V1 Hardware Contract：
+仍然应满足：
 
 ```text
-Twist
-BaseCommand(vx, vy, wz)
-Cartesian arm pose
-Cartesian arm velocity
-IK
-Swerve IK/FK
+Command Interface = 53
+State Interface   = 70
+```
+
+因此当前：
+
+```text
+JointTrajectoryController
+ForwardCommandController
+Spine controller
+IMUSensorBroadcaster
+```
+
+配置原则上不需要因为此次架构重构而改变。
+
+---
+
+## 5.5 Ros2SensorAdapter
+
+Camera / LiDAR 使用：
+
+```cpp
+class Ros2SensorAdapter;
+```
+
+它内部只持有：
+
+```cpp
+RobotHardware&
+```
+
+例如：
+
+```cpp
+class Ros2SensorAdapter {
+public:
+  explicit Ros2SensorAdapter(
+      RobotHardware& robot);
+
+  void start();
+  void stop();
+
+private:
+  RobotHardware& robot_;
+};
+```
+
+读取：
+
+```cpp
+robot_.read_state(
+    Lidar::Front,
+    scan);
+```
+
+以及：
+
+```cpp
+robot_.read_state(
+    Camera::FrontColor,
+    frame);
+```
+
+随后完成：
+
+```text
+LaserScan
+      ↓
+sensor_msgs::msg::LaserScan
+```
+
+以及：
+
+```text
+CameraFrame
+      ↓
+sensor_msgs::msg::Image
+sensor_msgs::msg::CameraInfo
+```
+
+Ros2SensorAdapter 只负责：
+
+```text
+C++ type → ROS message
+timestamp mapping
+ROS QoS
+Topic naming
+publish
+```
+
+它不负责：
+
+```text
+sensor acquisition
+MuJoCo rendering
+LiDAR ray calculation
+robot state
+sensor business logic
+```
+
+这些都必须在 `RobotHardware` 或 backend 中完成。
+
+---
+
+## 5.6 两个 Adapter 必须共享同一个 RobotHardware
+
+ROS 模式下：
+
+```cpp
+class Ros2ControlAdapter {
+private:
+  RobotHardware robot_;
+  std::unique_ptr<Ros2SensorAdapter> sensor_adapter_;
+};
+```
+
+创建：
+
+```cpp
+sensor_adapter_ =
+    std::make_unique<Ros2SensorAdapter>(
+        robot_);
+```
+
+因此：
+
+```text
+Ros2ControlAdapter
+          │
+          ▼
+     RobotHardware
+          ▲
+          │
+Ros2SensorAdapter
+```
+
+必须是同一实例。
+
+绝不允许：
+
+```text
+Ros2ControlAdapter
+    └── RobotHardware A
+
+Ros2SensorAdapter
+    └── RobotHardware B
+```
+
+否则 MuJoCo 下会启动两份仿真，真机下则可能形成两个独立硬件 session。
+
+---
+
+## 5.7 Plugin 命名
+
+当前：
+
+```text
+mfr3duo_hardware/MujocoSystem
+```
+
+改为：
+
+```text
+mfr3duo_hardware/Ros2ControlAdapter
+```
+
+Plugin：
+
+```cpp
+PLUGINLIB_EXPORT_CLASS(
+    mfr3duo_hardware::Ros2ControlAdapter,
+    hardware_interface::SystemInterface)
+```
+
+XML：
+
+```xml
+<class
+  name="mfr3duo_hardware/Ros2ControlAdapter"
+  type="mfr3duo_hardware::Ros2ControlAdapter"
+  base_class_type="hardware_interface::SystemInterface"/>
+```
+
+Xacro：
+
+```xml
+<hardware>
+  <plugin>
+    mfr3duo_hardware/Ros2ControlAdapter
+  </plugin>
+</hardware>
+```
+
+这里：
+
+```text
+Ros2ControlAdapter
+```
+
+虽然需要导出给 pluginlib，但不属于给普通开发者直接调用的 Public C++ API。
+
+---
+
+# 6. 代码组织、构建和依赖边界
+
+本次重构继续保持目录简单。
+
+建议最终结构：
+
+```text
+mfr3duo_hardware/
+├── CMakeLists.txt
+├── package.xml
+├── mfr3duo_hardware.xml
+│
+├── include/
+│   └── mfr3duo_hardware/
+│       ├── robot_hardware.hpp
+│       ├── robot_types.hpp
+│       └── visibility_control.hpp
+│
+├── src/
+│   ├── robot_hardware.cpp
+│   │
+│   ├── ros2_control_adapter.hpp
+│   ├── ros2_control_adapter.cpp
+│   │
+│   ├── ros2_sensor_adapter.hpp
+│   └── ros2_sensor_adapter.cpp
+│
+├── ros2_control/
+│   ├── mfr3duo.ros2_control.xacro
+│   └── mfr3duo_ros2_control_macros.xacro
+│
+├── config/
+│   └── controllers.yaml
+│
+├── launch/
+│   └── mujoco_control.launch.py
+│
+└── test/
+    ├── robot_hardware_test.cpp
+    ├── robot_hardware_concurrency_test.cpp
+    ├── interface_test.cpp
+    ├── runtime_integration.py
+    ├── control_cycle_benchmark.cpp
+    ├── ros2_control_adapter_cycle_benchmark.cpp
+    ├── hardware_info.hpp
+    ├── link_mujoco.cpp
+    └── long_running_test.cpp
+```
+
+不要为了表示 adapter 再增加：
+
+```text
+src/adapter/
+```
+
+当前只有两个 adapter，没有必要增加目录层级。
+
+---
+
+## 6.1 RobotHardware 内部
+
+`robot_hardware.cpp`：
+
+```cpp
+struct RobotHardware::Impl {
+  mfr3duo_mujoco::Simulation simulation;
+
+  RobotState state;
+  ImuState imu_state;
+
+  RobotCommand command;
+
+  std::size_t steps_per_update{1};
+
+  ...
+};
+```
+
+Public Header 只有：
+
+```cpp
+struct Impl;
+std::unique_ptr<Impl> impl_;
+```
+
+因此：
+
+```text
+mfr3duo_mujoco
+```
+
+不会泄露到 Public API。
+
+---
+
+## 6.2 mfr3duo_mujoco 与 Hardware 类型
+
+`mfr3duo_mujoco` 可以继续有自己的：
+
+```text
+RobotCommand
+RobotState
+ImuState
+LaserScan
+CameraFrame
+```
+
+因为它仍然是独立的纯 C++ MuJoCo 模块。
+
+但是 `RobotHardware` Public API 不应该直接：
+
+```cpp
+using RobotState =
+    mfr3duo_mujoco::RobotState;
+```
+
+也不应：
+
+```cpp
+#include <mfr3duo_mujoco/simulation.hpp>
+```
+
+出现在 Public Header。
+
+内部应该做明确映射：
+
+```text
+mfr3duo_hardware::RobotCommand
+                  ↓
+mfr3duo_mujoco::RobotCommand
+```
+
+状态反向：
+
+```text
+mfr3duo_mujoco::RobotState
+                  ↓
+mfr3duo_hardware::RobotState
+```
+
+原因很明确：
+
+> `RobotHardware` 定义的是机器人 contract，`mfr3duo_mujoco` 定义的是 MuJoCo backend contract。
+
+二者当前很相似，不代表它们应该成为同一个 public type。
+
+否则以后接真机时：
+
+```text
+mfr3duo_hardware
+```
+
+仍然会被迫依赖 `mfr3duo_mujoco`。
+
+---
+
+## 6.3 CMake Target
+
+建议至少拆两个 library。
+
+### Core Hardware Library
+
+```text
+mfr3duo_hardware
+```
+
+生成：
+
+```text
+libmfr3duo_hardware.so
+```
+
+它包含：
+
+```text
+RobotHardware
+RobotHardware public types
+MuJoCo backend implementation
+```
+
+依赖：
+
+```text
+PRIVATE:
+    mfr3duo_mujoco
+```
+
+不依赖：
+
+```text
+rclcpp
+hardware_interface
+pluginlib
+sensor_msgs
+```
+
+普通 C++ 用户：
+
+```cmake
+target_link_libraries(
+    my_application
+    PRIVATE
+    mfr3duo_hardware
+)
+```
+
+即可。
+
+### ROS 2 Adapter Library
+
+```text
+mfr3duo_ros2_adapter
+```
+
+生成：
+
+```text
+libmfr3duo_ros2_adapter.so
+```
+
+包含：
+
+```text
+Ros2ControlAdapter
+Ros2SensorAdapter
+```
+
+依赖：
+
+```text
+mfr3duo_hardware
+
+hardware_interface
+pluginlib
+rclcpp
+rclcpp_lifecycle
+
+sensor_msgs
+...
+```
+
+这样依赖方向非常直观：
+
+```text
+mfr3duo_ros2_adapter
+          ↓
+mfr3duo_hardware
+          ↓
+mfr3duo_mujoco
+```
+
+而不是：
+
+```text
+mfr3duo_hardware
+          ↓
+ROS 2
+```
+
+---
+
+## 6.4 Public Header 安装
+
+只安装：
+
+```text
+robot_hardware.hpp
+robot_types.hpp
+visibility_control.hpp
+```
+
+`ros2_control_adapter.hpp` 和：
+
+```text
+ros2_sensor_adapter.hpp
+```
+
+可以留在：
+
+```text
+src/
+```
+
+仅供 package 自身构建。
+
+它们不是 SDK 接口。
+
+---
+
+# 7. 测试、迁移步骤与最终冻结边界
+
+这次重构虽然主要修改架构，但必须避免“换了一层包装后原有能力退化”。
+
+因此测试应重新划分为：
+
+```text
+RobotHardware tests
+ROS adapter tests
+```
+
+而不是所有行为都依赖 ROS integration test 验证。
+
+## 7.1 RobotHardware 单元/集成测试
+
+这是此次重构后最重要的测试层。
+
+完全不启动 ROS。
+
+至少覆盖：
+
+```text
+initialize
+activate
+deactivate
+shutdown
+
+invalid lifecycle call
+reinitialize
+safe activation
+safe deactivation
+
+shutdown while Active
+    安全停机后回到 Uninitialized
+```
+
+并发契约：
+
+```text
+control thread: write_command + update
+reader threads: read_state(RobotState)
+
+同一 sequence 必须对应完全相同的快照
+```
+
+由 `robot_hardware_concurrency_test` 承担，防止快照保护被改回裸访问。
+
+运动接口：
+
+```text
+Left Arm Position
+Left Arm Velocity
+Left Arm Effort
+
+Right Arm Position
+Right Arm Velocity
+Right Arm Effort
+
+Left / Right independent control mode
+
+Spine Position
+
+TMR front steering
+TMR rear steering
+
+TMR front drive
+TMR rear drive
+
+Left Gripper
+Right Gripper
+```
+
+状态：
+
+```text
+RobotState sequence
+
+RobotState timestamp
+
+whole-robot snapshot coherence
+
+Joint position
+Joint velocity
+Joint effort
+
+Gripper stalled
+```
+
+传感器：
+
+```text
+IMU valid state
+
+Front / Rear LiDAR
+
+all Camera IDs
+
+Camera dimensions
+Camera calibration
+Camera frame IDs
+```
+
+错误语义：
+
+```text
+invalid RobotCommand
+      ↓
+false
+      ↓
+no partial command update
+```
+
+同时验证：
+
+```text
+read_state() failure
+```
+
+不会向调用者发布半更新状态。
+
+设备 ID 边界：
+
+```text
+read_state(static_cast<Lidar>(255), scan) == false
+read_state(static_cast<Camera>(255), frame) == false
+最后一个合法 ID 仍然可读
+```
+
+---
+
+## 7.2 ROS Adapter 测试
+
+ROS 测试主要验证映射。
+
+### Ros2ControlAdapter
+
+继续测试：
+
+```text
+pluginlib load
+
+53 command interfaces
+70 state interfaces
+
+interface names
+interface order independence
+
+left arm mode switching
+right arm mode switching
+
+partial arm switch rejected
+mixed arm switch rejected
+```
+
+Controller integration：
+
+```text
+JointStateBroadcaster
+
+Left JointTrajectoryController
+Right JointTrajectoryController
+
+TMR Steering ForwardCommandController
+TMR Drive ForwardCommandController
+
+Spine Position Controller
+
+IMUSensorBroadcaster
+```
+
+### Ros2SensorAdapter
+
+验证：
+
+```text
+Front LiDAR → sensor_msgs/LaserScan
+
+Front Color → sensor_msgs/Image
+
+Depth Camera → Image + CameraInfo
+
+frame_id
+optical frame
+timestamp
+camera intrinsics
+QoS
+```
+
+重点不再重复验证：
+
+```text
+MuJoCo Camera 能否渲染
+LiDAR 数据是否正确生成
+```
+
+因为这些应已经由：
+
+```text
+RobotHardware tests
+```
+
+覆盖。
+
+ROS Adapter test 只关心：
+
+```text
+C++ data → ROS representation
+```
+
+是否正确。
+
+---
+
+## 7.3 性能验收
+
+控制路径：
+
+```text
+RobotHardware::write_command()
+RobotHardware::update()
+RobotHardware::read_state(RobotState)
+```
+
+继续作为正式 benchmark 对象。
+
+要求：
+
+```text
+无 ROS publisher
+无 ROS callback
+无文件 IO
+无 Camera rendering
+无 LiDAR ray casting
+尽量无周期性 heap allocation
+```
+
+当前已有：
+
+```text
+500 Hz
+1000 Hz
+```
+
+benchmark 可以迁移为直接测量：
+
+```text
+RobotHardware
+```
+
+而不是必须经过 `Ros2ControlAdapter`。
+
+然后另外增加轻量 ROS integration benchmark，检查 Adapter 没有产生明显额外开销。
+
+Camera / LiDAR：
+
+```text
+data generation
+ROS serialization
+ROS publishing
+```
+
+仍然不得进入主控制线程。
+
+---
+
+## 7.4 推荐迁移顺序
+
+为了降低一次性重构风险，按照以下顺序实施。
+
+### 第一阶段：建立 RobotHardware
+
+新增：
+
+```text
+robot_hardware.hpp
+robot_types.hpp
+robot_hardware.cpp
+```
+
+内部直接复用现有：
+
+```text
+mfr3duo_mujoco::Simulation
+```
+
+先把现有：
+
+```text
+MujocoSystem → Simulation
+```
+
+中的 hardware semantics 搬入：
+
+```text
+RobotHardware
+```
+
+完成后要求 standalone 测试可以：
+
+```text
+arm
+spine
+TMR
+gripper
+IMU
+Camera
+LiDAR
+```
+
+全部直接通过 C++ API 工作。
+
+此阶段原 `MujocoSystem` 暂时可以继续存在。
+
+### 第二阶段：重构 ros2_control
+
+将：
+
+```text
+MujocoSystem
+```
+
+改为：
+
+```text
+Ros2ControlAdapter
+```
+
+删除其中：
+
+```text
+mfr3duo_mujoco::Simulation simulation_;
+```
+
+替换为：
+
+```cpp
+RobotHardware robot_;
+```
+
+所有：
+
+```text
+simulation_.step()
+simulation_.read_state()
+simulation_.write_command()
+```
+
+替换为：
+
+```text
+robot_.update()
+robot_.read_state()
+robot_.write_command()
+```
+
+然后恢复全部：
+
+```text
+53 command
+70 state
+controller integration
+```
+
+测试。
+
+### 第三阶段：重构 Sensor
+
+将当前：
+
+```text
+MujocoSensorBridge
+```
+
+改为：
+
+```text
+Ros2SensorAdapter
+```
+
+从：
+
+```text
+MujocoSensorBridge
+        ↓
+Simulation
+```
+
+改为：
+
+```text
+Ros2SensorAdapter
+        ↓
+RobotHardware
+```
+
+删除 ROS Sensor Adapter 对：
+
+```text
+mfr3duo_mujoco
+```
+
+的直接依赖。
+
+### 第四阶段：清理 Public Boundary
+
+确认：
+
+```text
+include/mfr3duo_hardware/
+```
+
+中没有：
+
+```text
+ROS headers
+MuJoCo headers
+mfr3duo_mujoco headers
+```
+
+并确认普通纯 C++ 示例只需：
+
+```cpp
+#include <mfr3duo_hardware/robot_hardware.hpp>
+```
+
+即可完成机器人访问。
+
+### 第五阶段：删除旧边界
+
+全部迁移完成后删除：
+
+```text
+MujocoSystem
+MujocoSensorBridge
+```
+
+名称和旧 plugin name。
+
+不保留两套长期兼容 API。
+
+如果当前项目尚未正式发布 V1，可以直接 clean break。
+
+---
+
+## 7.5 最终冻结的模块边界
+
+重构结束后，整个模块只需要理解以下关系：
+
+```text
+                  mfr3duo_hardware
+                         │
+                         ▼
+                  RobotHardware
+             唯一正式 C++ Hardware API
+                         │
+              ┌──────────┴──────────┐
+              │                     │
+              ▼                     ▼
+       motion hardware          sensor hardware
+              │                     │
+              │                     │
+       RobotCommand              ImuState
+       RobotState                LaserScan
+                                 CameraFrame
+              │                     │
+              └──────────┬──────────┘
+                         │
+                         ▼
+               RobotHardware::Impl
+                         │
+                         ▼
+              mfr3duo_mujoco
+```
+
+ROS：
+
+```text
+                       RobotHardware
+                      /             \
+                     /               \
+                    ▼                 ▼
+         Ros2ControlAdapter      Ros2SensorAdapter
+                  │                     │
+                  ▼                     ▼
+             ros2_control          ROS Topics
+```
+
+正式 Public API 是：
+
+```text
+RobotHardware
+RobotHardwareOptions
+
+RobotCommand
+RobotState
+
+JointControlMode
+JointCommand
+JointState
+
+ArmCommand
+ArmState
+
+TmrCommand
+TmrState
+
+SpineCommand
+SpineState
+
+GripperCommand
+GripperState
+
+ImuState
+
+Lidar
+LaserScan
+
+Camera
+Image
+CameraInfo
+CameraFrame
+```
+
+内部实现：
+
+```text
+RobotHardware::Impl
+Ros2ControlAdapter
+Ros2SensorAdapter
+```
+
+不是正式 Hardware API：
+
+```text
+hardware_interface::SystemInterface
+controller_manager
+ROS Topic
+ROS Message
+
+Simulation
+MuJoCo step
+simulation time
+simulation step
+
+Swerve IK / FK
+cmd_vel
 Odometry
-trajectory
-MoveAbsolute
-grasp behavior
-PTP
+
+trajectory generation
+Cartesian control
+MoveIt
+Nav2
 whole-body coordination
-RobotModel pointer
-Franka elbow interface
 ```
 
-这套设计最大的价值不是“比 Franka 接口少”，而是把边界重新放正确：
+最终可以用一句话冻结整个设计：
 
 ```text
-hardware
-    = physical primitive
+RobotHardware 是 MFR3Duo 唯一正式的整机 C++ Hardware API。
 
-controller
-    = control law / kinematics
+Ros2ControlAdapter 将 RobotHardware 适配为 ros2_control。
 
-planner
-    = planning
+Ros2SensorAdapter 将 RobotHardware 的传感器数据适配为 ROS 2 消息。
 
-robot
-    = application semantics
+ROS 2 与 MuJoCo 都不能反向定义 RobotHardware 的公共接口。
 ```
 
-这样以后无论底层换成 MuJoCo、Franka 官方驱动还是自己的 `robohardware`，上层结构都不会被某个 backend 的历史设计绑死。
+这使得当前：
+
+```text
+MuJoCo
+```
+
+只是第一个 backend。
+
+未来底层替换成：
+
+```text
+真实 FR3
+TMR SDK
+Spine Driver
+Gripper Driver
+真实 Camera / LiDAR / IMU
+```
+
+时，上层仍然可以继续面对同一套：
+
+```cpp
+mfr3duo_hardware::RobotHardware
+```
+
+而无需重新设计机器人接口。

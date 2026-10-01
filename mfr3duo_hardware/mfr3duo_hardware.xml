@@ -1,7 +1,7 @@
-<library path="mfr3duo_mujoco_system">
-  <class name="mfr3duo_hardware/MujocoSystem"
-         type="mfr3duo_hardware::MujocoSystem"
+<library path="mfr3duo_ros2_adapter">
+  <class name="mfr3duo_hardware/Ros2ControlAdapter"
+         type="mfr3duo_hardware::Ros2ControlAdapter"
          base_class_type="hardware_interface::SystemInterface">
-    <description>Mobile FR3 Duo MuJoCo ros2_control system.</description>
+    <description>Adapts RobotHardware to ros2_control.</description>
   </class>
 </library>
