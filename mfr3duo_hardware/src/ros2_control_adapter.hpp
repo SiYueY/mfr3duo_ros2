@@ -82,6 +82,7 @@ private:
         JointControlMode::Position, JointControlMode::Position};
     std::array<JointControlMode, 2> pending_modes_ = arm_modes_;
     std::chrono::nanoseconds control_period_{std::chrono::milliseconds(2)};
+    bool viewer_enabled_{false};
 };
 
 }  // namespace mfr3duo_hardware

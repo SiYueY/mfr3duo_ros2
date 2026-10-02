@@ -47,7 +47,18 @@ source install/setup.bash
 ros2 launch mfr3duo_hardware mujoco_control.launch.py
 ```
 
+默认打开 MuJoCo 仿真窗口，窗口展示 ros2_control 正在控制的同一个仿真实例。需要可用的桌面显示与 OpenGL 环境；无窗口运行可添加 `viewer_enabled:=false`。查看器由底层仿真管理，物理步进仍由 ros2_control 控制循环驱动。
+
 启动文件从 description 生成 URDF，加载一个 `mfr3duo_hardware/Ros2ControlAdapter` 插件和关节状态、IMU、双臂轨迹、TMR 转向/驱动、脊柱控制器。可用 `ros2 control list_hardware_interfaces` 和 `ros2 control list_controllers` 检查接口与激活状态。控制频率只有 `controller_update_rate` 一个事实来源，默认 500 Hz；launch 把它换算成硬件参数 `control_period=1/controller_update_rate`，所以 1000 Hz 只需 `controller_update_rate:=1000`。这些参数指定目标周期，不保证墙钟硬实时。
+
+升降接收绝对位置（单位 m，范围 0～0.85），例如：
+
+```bash
+ros2 topic pub --once /spine_controller/commands \
+  std_msgs/msg/Float64MultiArray "{data: [0.24]}"
+```
+
+该控制器直接转发位置目标，不生成运动轨迹。底层升降位置伺服的阻尼已调整为 1000 N·s/m；`mfr3duo_mujoco.spine_response` 测试检查升降阶跃的超调和稳定性。修改底层参数并重新构建后，需要重启仿真才能生效。
 
 Camera 和 LiDAR 从同一个 MuJoCo 实例发布到 `/sensors/<device>/image_raw`、`/sensors/<device>/camera_info` 与 `/sensors/lidar_front/scan`、`/sensors/lidar_rear/scan`。当前模拟相机输出为 320×180、25 Hz。`Ros2SensorAdapter` 在控制循环外发布消息。
 

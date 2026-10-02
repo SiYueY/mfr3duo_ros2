@@ -85,6 +85,15 @@ hardware_interface::CallbackReturn Ros2ControlAdapter::on_init(
         !parse_control_period(it->second, control_period_)) {
         return hardware_interface::CallbackReturn::ERROR;
     }
+    const auto viewer = info.hardware_parameters.find("viewer_enabled");
+    viewer_enabled_ = false;
+    if (viewer != info.hardware_parameters.end()) {
+        if (viewer->second == "true" || viewer->second == "1") {
+            viewer_enabled_ = true;
+        } else if (viewer->second != "false" && viewer->second != "0") {
+            return hardware_interface::CallbackReturn::ERROR;
+        }
+    }
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -144,6 +153,7 @@ hardware_interface::CallbackReturn Ros2ControlAdapter::on_configure(
     const rclcpp_lifecycle::State&) {
     RobotHardwareOptions options;
     options.control_period = control_period_;
+    options.viewer_enabled = viewer_enabled_;
     if (!robot_.initialize(options)) return hardware_interface::CallbackReturn::ERROR;
     try {
         sensor_adapter_ = std::make_unique<Ros2SensorAdapter>(robot_);

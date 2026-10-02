@@ -24,6 +24,14 @@ int main(int argc, char** argv) {
     mfr3duo_hardware::Ros2ControlAdapter system;
     auto info = mfr3duo_hardware_test::make_info();
     auto invalid = info;
+    invalid.hardware_parameters["viewer_enabled"] = "invalid";
+    if (!check(system.on_init(invalid) == CallbackReturn::ERROR, "invalid viewer flag accepted"))
+        return 1;
+    auto viewer_info = info;
+    viewer_info.hardware_parameters["viewer_enabled"] = "true";
+    if (!check(system.on_init(viewer_info) == CallbackReturn::SUCCESS, "viewer flag rejected"))
+        return 1;
+    invalid = info;
     invalid.hardware_parameters["control_period"] = "0";
     if (!check(system.on_init(invalid) == CallbackReturn::ERROR, "invalid period accepted") ||
         !check(system.on_init(info) == CallbackReturn::SUCCESS, "initialization failed"))

@@ -23,10 +23,12 @@ def generate_launch_description():
     control_period = PythonExpression(["1.0 / ", LaunchConfiguration("controller_update_rate")])
     description = Command(
         [FindExecutable(name="xacro"), " ", xacro,
-         " control_period:=", control_period]
+         " control_period:=", control_period,
+         " viewer_enabled:=", LaunchConfiguration("viewer_enabled")]
     )
     return LaunchDescription([
         DeclareLaunchArgument("controller_update_rate", default_value="500"),
+        DeclareLaunchArgument("viewer_enabled", default_value="true"),
         Node(
             package="robot_state_publisher",
             executable="robot_state_publisher",

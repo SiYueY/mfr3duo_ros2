@@ -21,6 +21,7 @@ namespace mfr3duo_hardware {
  */
 struct RobotHardwareOptions {
     std::chrono::nanoseconds control_period{std::chrono::milliseconds(2)};
+    bool viewer_enabled{false};
 };
 
 /**

@@ -3,12 +3,14 @@
   <xacro:include filename="$(find mfr3duo_description)/urdf/mfr3duo.xacro"/>
   <xacro:include filename="$(find mfr3duo_hardware)/ros2_control/mfr3duo_ros2_control_macros.xacro"/>
   <xacro:arg name="control_period" default="0.002"/>
+  <xacro:arg name="viewer_enabled" default="true"/>
   <xacro:mfr3duo connected_to="base"/>
 
   <ros2_control name="MFR3DuoMujoco" type="system">
     <hardware>
       <plugin>mfr3duo_hardware/Ros2ControlAdapter</plugin>
       <param name="control_period">$(arg control_period)</param>
+      <param name="viewer_enabled">$(arg viewer_enabled)</param>
     </hardware>
     <xacro:mfr3duo_arm_joint name="left_fr3v2_1_joint1"/>
     <xacro:mfr3duo_arm_joint name="left_fr3v2_1_joint2"/>

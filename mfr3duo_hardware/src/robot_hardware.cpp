@@ -354,7 +354,7 @@ bool RobotHardware::initialize(const RobotHardwareOptions& options) {
     if (control_period <= std::chrono::nanoseconds::zero()) return false;
 
     mfr3duo_mujoco::SimulationOptions backend;
-    backend.viewer_enabled = false;
+    backend.viewer_enabled = options.viewer_enabled;
     backend.cameras_enabled = true;
     backend.lidars_enabled = true;
     backend.imu_enabled = true;

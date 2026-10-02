@@ -19,7 +19,8 @@ def main():
     os.environ["ROS_DOMAIN_ID"] = str(100 + os.getpid() % 100)
     with tempfile.TemporaryFile(mode="w+") as log:
         process = subprocess.Popen(
-            ["ros2", "launch", "mfr3duo_hardware", "mujoco_control.launch.py"],
+            ["ros2", "launch", "mfr3duo_hardware", "mujoco_control.launch.py",
+             "viewer_enabled:=false"],
             stdout=log,
             stderr=subprocess.STDOUT,
             start_new_session=True,
