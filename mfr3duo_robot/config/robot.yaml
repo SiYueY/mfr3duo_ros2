@@ -1,0 +1,14 @@
+/**:
+  ros__parameters:
+    use_sim_time: false
+    execution:
+      task_timeout: 180.0
+    robot:
+      # Free-space posture/pregrasp motion; carrying/contact motion stays slower.
+      transit_velocity_scaling: 0.50
+      transit_acceleration_scaling: 0.30
+      velocity_scaling: 0.15
+      acceleration_scaling: 0.08
+      grasp_spine_height: 0.55
+      grasp_tcp_offset: 0.0225
+      terminal_timeout: 4.0

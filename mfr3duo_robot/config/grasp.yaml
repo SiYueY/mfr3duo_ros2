@@ -1,0 +1,27 @@
+# Phase 5 acceptance values are frozen before physical testing.
+observation:
+  objects_topic_prefix: /perception/objects
+  tools_topic_prefix: /perception/tools
+  timeout: 0.5
+  maximum_age: 0.3
+  stability_window: 0.5
+  maximum_relative_translation_drift: 0.005
+  maximum_relative_orientation_drift: 0.05
+  objects:
+    box:
+      body_name: grasp_object_box
+      collision_geom: grasp_object_box_collision
+      dimensions: [0.04, 0.04, 0.05]
+      grasp_width: 0.04
+      epsilon_inner: 0.005
+      epsilon_outer: 0.005
+fixture:
+  initial_keyframe: manipulation_home
+  table_dimensions: [0.24, 0.24, 1.0]
+  table_position: [0.8, 0.75, 0.46]
+  pregrasp_distance: 0.12
+  lift_distance: 0.10
+  acquisition_effort: 20.0
+  gripper_speed: 0.05
+  velocity_scaling: 0.05
+  acceleration_scaling: 0.02

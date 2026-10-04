@@ -2,14 +2,26 @@
 <package format="3">
   <name>mfr3duo_robot</name>
   <version>0.1.0</version>
-  <description>Robot bringup integration package skeleton for Mobile FR3 Duo.</description>
+  <description>Task ownership, whole-robot readiness and verified physical manipulation for Mobile FR3 Duo.</description>
   <maintainer email="maintainers@example.com">mfr3duo maintainers</maintainer>
   <license>Apache-2.0</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>mfr3duo_description</depend>
-  <depend>mfr3duo_hardware</depend>
+  <depend>mfr3duo_control</depend>
+  <depend>sensor_msgs</depend>
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>ament_index_cpp</depend>
+  <depend>tf2_ros</depend>
+  <depend>yaml_cpp_vendor</depend>
   <depend>mfr3duo_moveit</depend>
   <depend>mfr3duo_nav</depend>
+  <exec_depend>nav2_common</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <test_depend>control_msgs</test_depend>
+  <test_depend>action_msgs</test_depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>

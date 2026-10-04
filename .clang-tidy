@@ -1,0 +1,8 @@
+---
+Checks: '-*,readability-identifier-naming'
+HeaderFilterRegex: '(^|/)mfr3duo_(hardware|control|moveit|nav|robot)/(include|src|test|tools)/'
+CheckOptions:
+  - key: readability-identifier-naming.MethodCase
+    value: lower_case
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
