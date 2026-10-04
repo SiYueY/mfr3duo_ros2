@@ -1,0 +1,18 @@
+# Phase 3 validation values, frozen before runtime acceptance.
+execution:
+  goal_response_timeout: 2.0
+  timeout_margin: 5.0
+  cancel_timeout: 1.0
+  terminal_timeout: 4.0
+  start_tolerance:
+    arm_revolute: 0.02
+    spine_prismatic: 0.005
+move_group:
+  state_timeout: 1.0
+  scene_timeout: 2.0
+  sampling_timeout: 2.0
+  inactive_joint_validation_tolerance: 0.003
+  cartesian:
+    relative_jump_threshold: 5.0
+    absolute_revolute_threshold: 0.3
+    absolute_prismatic_threshold: 0.03

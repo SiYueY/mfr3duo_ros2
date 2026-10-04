@@ -2,12 +2,37 @@
 <package format="3">
   <name>mfr3duo_moveit</name>
   <version>0.1.0</version>
-  <description>MoveIt integration package skeleton for Mobile FR3 Duo.</description>
+  <description>MoveIt planning configuration and validated motion prototypes for Mobile FR3 Duo.</description>
   <maintainer email="maintainers@example.com">mfr3duo maintainers</maintainer>
   <license>Apache-2.0</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>mfr3duo_description</depend>
   <depend>moveit_ros_planning_interface</depend>
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>moveit_msgs</depend>
+  <depend>rcl_interfaces</depend>
+  <depend>rclcpp_action</depend>
+  <depend>tf2_ros</depend>
+  <depend>controller_manager_msgs</depend>
+  <depend>moveit_core</depend>
+  <depend>ompl</depend>
+  <depend>yaml_cpp_vendor</depend>
+  <depend>moveit_ros_planning</depend>
+  <exec_depend>mfr3duo_control</exec_depend>
+  <exec_depend>mfr3duo_hardware</exec_depend>
+  <exec_depend>moveit_ros_move_group</exec_depend>
+  <depend>action_msgs</depend>
+  <depend>std_msgs</depend>
+  <exec_depend>moveit_kinematics</exec_depend>
+  <exec_depend>moveit_planners_ompl</exec_depend>
+  <exec_depend>moveit_simple_controller_manager</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <depend>control_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>tf2_msgs</depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>

@@ -1,0 +1,40 @@
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+moveit_simple_controller_manager:
+  controller_names:
+  - left_arm_controller
+  - right_arm_controller
+  - spine_controller
+  left_arm_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
+    - left_fr3v2_1_joint1
+    - left_fr3v2_1_joint2
+    - left_fr3v2_1_joint3
+    - left_fr3v2_1_joint4
+    - left_fr3v2_1_joint5
+    - left_fr3v2_1_joint6
+    - left_fr3v2_1_joint7
+  right_arm_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
+    - right_fr3v2_1_joint1
+    - right_fr3v2_1_joint2
+    - right_fr3v2_1_joint3
+    - right_fr3v2_1_joint4
+    - right_fr3v2_1_joint5
+    - right_fr3v2_1_joint6
+    - right_fr3v2_1_joint7
+  spine_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
+    - franka_spine_vertical_joint
+trajectory_execution:
+  allowed_execution_duration_scaling: 2.0
+  allowed_goal_duration_margin: 3.0
+  allowed_start_tolerance: 0.02

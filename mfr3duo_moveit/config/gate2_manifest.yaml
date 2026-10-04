@@ -1,0 +1,44 @@
+# Phase 2B manifest. Criteria are fixed before formal acceptance; explore is
+# construction/sampler diagnosis only and never reports Gate PASS.
+manifest_version: 1
+moveit_version: 2.5.9
+execution_compatibility: official ExecuteTrajectory capability and MoveItSimpleControllerManager; application serial execution fence
+ompl_version: 1.7.0
+solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+sampler: seeded single-attempt KDL IK, fixed-spine dual IK, full-state AND validation
+planner: ompl/RRTConnectkConfigDefault
+ompl_process_seed: 847
+ik_trial_seeds: [1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110]
+repeats_per_target: 10
+position_tolerance: 0.003
+orientation_tolerance: 0.01
+joint_tolerance: 0.0001
+planning_timeout: 5.0
+sampling_timeout: 2.0
+minimum_success_rate: 0.9
+p95_planning_wall_time_limit: 5.5
+inactive_joint_max_error: 0.003
+execution_arm_joint_error: 0.02
+execution_spine_joint_error: 0.003
+execution_position_tolerance: 0.02
+execution_orientation_tolerance: 0.05
+execution_goal_response_timeout: 5.0
+execution_deadline: 2 * trajectory_duration + 5 seconds
+execution_terminal_cancel_timeout: 4.0
+runtime_cases: [A_left_high, A_right_high, B_small, C_up]
+scene: empty world; SRDF self collision enabled; TCP obstacle negative fixture
+start: dual_arm_spine/home; fingers 0.035; TMR and passive chassis joints zero
+pose_construction: FK from the bounded joint configurations below in the full robot model frame
+unreachable_proof: Gate A high targets must exceed the fixed-arm chain translation-norm upper bound by 0.05 m
+failure_classes: [IKFailed, GoalSamplingFailed, PlanningTimeout, PathPlanningFailed, Collision, ConstraintViolation, ExecutionFailed, StateUnavailable]
+home_left: [0.0261, -1.2125, -0.607, -0.9266, 0.001, 0.8389, 0.0281]
+home_right: [-0.2357, -1.1902, -0.2823, -1.2111, 0.3914, 0.4848, -0.2972]
+cases:
+  - {id: A_left_high, gate: A, group: left_arm_spine, spine: 0.8, high: true, left: [-1.8261453686056142, 0.6639092553505206, 1.8546028842190814, -0.17731476957725523, -0.4405972164831544, 2.7035012965265453, 0.27624529664852604]}
+  - {id: A_right_high, gate: A, group: right_arm_spine, spine: 0.8, high: true, right: [-1.6965583548428984, -0.654967663272759, 0.11084848371254985, -0.376918723315828, -2.1258522482367894, 2.6933640022487375, 0.9303804520386185]}
+  - {id: A_left_near, gate: A, group: left_arm_spine, spine: 0.3, left: [0.0661, -1.2125, -0.607, -0.9266, 0.001, 0.8389, 0.0281]}
+  - {id: A_right_near, gate: A, group: right_arm_spine, spine: 0.3, right: [-0.2757, -1.1902, -0.2823, -1.2111, 0.3914, 0.4848, -0.2972]}
+  - {id: B_small, gate: B, group: dual_arm, spine: 0.2, left: [0.0661, -1.2125, -0.607, -0.9266, 0.001, 0.8389, 0.0281], right: [-0.2757, -1.1902, -0.2823, -1.2111, 0.3914, 0.4848, -0.2972]}
+  - {id: B_offset, gate: B, group: dual_arm, spine: 0.2, left: [0.1061, -1.2125, -0.557, -0.9266, 0.001, 0.8389, 0.0281], right: [-0.3157, -1.1902, -0.3323, -1.2111, 0.3914, 0.4848, -0.2972]}
+  - {id: C_up, gate: C, group: dual_arm_spine, spine: 0.3, left: [0.0661, -1.2125, -0.607, -0.9266, 0.001, 0.8389, 0.0281], right: [-0.2757, -1.1902, -0.2823, -1.2111, 0.3914, 0.4848, -0.2972]}
+  - {id: C_down, gate: C, group: dual_arm_spine, spine: 0.15, left: [0.1061, -1.2125, -0.557, -0.9266, 0.001, 0.8389, 0.0281], right: [-0.3157, -1.1902, -0.3323, -1.2111, 0.3914, 0.4848, -0.2972]}

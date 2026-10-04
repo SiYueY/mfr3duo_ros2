@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="mfr3duo">
+  <group name="left_arm">
+    <chain base_link="left_fr3v2_1_link0" tip_link="left_fr3v2_1_hand_tcp" />
+  </group>
+  <group name="right_arm">
+    <chain base_link="right_fr3v2_1_link0" tip_link="right_fr3v2_1_hand_tcp" />
+  </group>
+  <group name="spine">
+    <joint name="franka_spine_vertical_joint" />
+  </group>
+  <group name="left_arm_spine">
+    <chain base_link="franka_spine" tip_link="left_fr3v2_1_hand_tcp" />
+  </group>
+  <group name="right_arm_spine">
+    <chain base_link="franka_spine" tip_link="right_fr3v2_1_hand_tcp" />
+  </group>
+  <group name="dual_arm">
+    <group name="left_arm" />
+    <group name="right_arm" />
+  </group>
+  <group name="dual_arm_spine">
+    <group name="left_arm" />
+    <group name="right_arm" />
+    <group name="spine" />
+  </group>
+  <group name="left_gripper">
+    <joint name="left_fr3v2_1_finger_joint1" />
+    <joint name="left_fr3v2_1_finger_joint2" />
+  </group>
+  <end_effector name="left_hand" parent_link="left_fr3v2_1_hand" group="left_gripper" parent_group="left_arm" />
+  <group name="right_gripper">
+    <joint name="right_fr3v2_1_finger_joint1" />
+    <joint name="right_fr3v2_1_finger_joint2" />
+  </group>
+  <end_effector name="right_hand" parent_link="right_fr3v2_1_hand" group="right_gripper" parent_group="right_arm" />
+  <group_state name="home" group="left_arm">
+    <joint name="left_fr3v2_1_joint1" value="0.0261" />
+    <joint name="left_fr3v2_1_joint2" value="-1.2125" />
+    <joint name="left_fr3v2_1_joint3" value="-0.607" />
+    <joint name="left_fr3v2_1_joint4" value="-0.9266" />
+    <joint name="left_fr3v2_1_joint5" value="0.001" />
+    <joint name="left_fr3v2_1_joint6" value="0.8389" />
+    <joint name="left_fr3v2_1_joint7" value="0.0281" />
+  </group_state>
+  <group_state name="home" group="right_arm">
+    <joint name="right_fr3v2_1_joint1" value="-0.2357" />
+    <joint name="right_fr3v2_1_joint2" value="-1.1902" />
+    <joint name="right_fr3v2_1_joint3" value="-0.2823" />
+    <joint name="right_fr3v2_1_joint4" value="-1.2111" />
+    <joint name="right_fr3v2_1_joint5" value="0.3914" />
+    <joint name="right_fr3v2_1_joint6" value="0.4848" />
+    <joint name="right_fr3v2_1_joint7" value="-0.2972" />
+  </group_state>
+  <group_state name="home" group="spine">
+    <joint name="franka_spine_vertical_joint" value="0.2" />
+  </group_state>
+  <group_state name="home" group="left_arm_spine">
+    <joint name="left_fr3v2_1_joint1" value="0.0261" />
+    <joint name="left_fr3v2_1_joint2" value="-1.2125" />
+    <joint name="left_fr3v2_1_joint3" value="-0.607" />
+    <joint name="left_fr3v2_1_joint4" value="-0.9266" />
+    <joint name="left_fr3v2_1_joint5" value="0.001" />
+    <joint name="left_fr3v2_1_joint6" value="0.8389" />
+    <joint name="left_fr3v2_1_joint7" value="0.0281" />
+    <joint name="franka_spine_vertical_joint" value="0.2" />
+  </group_state>
+  <group_state name="home" group="right_arm_spine">
+    <joint name="right_fr3v2_1_joint1" value="-0.2357" />
+    <joint name="right_fr3v2_1_joint2" value="-1.1902" />
+    <joint name="right_fr3v2_1_joint3" value="-0.2823" />
+    <joint name="right_fr3v2_1_joint4" value="-1.2111" />
+    <joint name="right_fr3v2_1_joint5" value="0.3914" />
+    <joint name="right_fr3v2_1_joint6" value="0.4848" />
+    <joint name="right_fr3v2_1_joint7" value="-0.2972" />
+    <joint name="franka_spine_vertical_joint" value="0.2" />
+  </group_state>
+  <group_state name="home" group="dual_arm">
+    <joint name="left_fr3v2_1_joint1" value="0.0261" />
+    <joint name="left_fr3v2_1_joint2" value="-1.2125" />
+    <joint name="left_fr3v2_1_joint3" value="-0.607" />
+    <joint name="left_fr3v2_1_joint4" value="-0.9266" />
+    <joint name="left_fr3v2_1_joint5" value="0.001" />
+    <joint name="left_fr3v2_1_joint6" value="0.8389" />
+    <joint name="left_fr3v2_1_joint7" value="0.0281" />
+    <joint name="right_fr3v2_1_joint1" value="-0.2357" />
+    <joint name="right_fr3v2_1_joint2" value="-1.1902" />
+    <joint name="right_fr3v2_1_joint3" value="-0.2823" />
+    <joint name="right_fr3v2_1_joint4" value="-1.2111" />
+    <joint name="right_fr3v2_1_joint5" value="0.3914" />
+    <joint name="right_fr3v2_1_joint6" value="0.4848" />
+    <joint name="right_fr3v2_1_joint7" value="-0.2972" />
+  </group_state>
+  <group_state name="home" group="dual_arm_spine">
+    <joint name="left_fr3v2_1_joint1" value="0.0261" />
+    <joint name="left_fr3v2_1_joint2" value="-1.2125" />
+    <joint name="left_fr3v2_1_joint3" value="-0.607" />
+    <joint name="left_fr3v2_1_joint4" value="-0.9266" />
+    <joint name="left_fr3v2_1_joint5" value="0.001" />
+    <joint name="left_fr3v2_1_joint6" value="0.8389" />
+    <joint name="left_fr3v2_1_joint7" value="0.0281" />
+    <joint name="right_fr3v2_1_joint1" value="-0.2357" />
+    <joint name="right_fr3v2_1_joint2" value="-1.1902" />
+    <joint name="right_fr3v2_1_joint3" value="-0.2823" />
+    <joint name="right_fr3v2_1_joint4" value="-1.2111" />
+    <joint name="right_fr3v2_1_joint5" value="0.3914" />
+    <joint name="right_fr3v2_1_joint6" value="0.4848" />
+    <joint name="right_fr3v2_1_joint7" value="-0.2972" />
+    <joint name="franka_spine_vertical_joint" value="0.2" />
+  </group_state>
+  <disable_collisions link1="argo_drive_front_fixed_link" link2="base_link" reason="Rigid assembly" />
+  <disable_collisions link1="argo_drive_front_fixed_link" link2="caster_front_left_fixed_link" reason="Rigid assembly" />
+  <disable_collisions link1="argo_drive_front_fixed_link" link2="franka_spine" reason="Rigid assembly" />
+  <disable_collisions link1="argo_drive_rear_fixed_link" link2="caster_rear_right_fixed_link" reason="Rigid assembly" />
+  <disable_collisions link1="base_link" link2="caster_front_left_fixed_link" reason="Rigid assembly" />
+  <disable_collisions link1="base_link" link2="franka_spine" reason="Rigid assembly" />
+  <disable_collisions link1="caster_front_left_fixed_link" link2="franka_spine" reason="Rigid assembly" />
+  <disable_collisions link1="fr3_duo_mount_mounting_point" link2="head_link" reason="Rigid assembly" />
+  <disable_collisions link1="fr3_duo_mount_mounting_point" link2="left_fr3v2_1_link0" reason="Rigid assembly" />
+  <disable_collisions link1="fr3_duo_mount_mounting_point" link2="right_fr3v2_1_link0" reason="Rigid assembly" />
+  <disable_collisions link1="head_link" link2="left_fr3v2_1_link0" reason="Rigid assembly" />
+  <disable_collisions link1="head_link" link2="right_fr3v2_1_link0" reason="Rigid assembly" />
+  <disable_collisions link1="left_fr3v2_1_hand" link2="left_fr3v2_1_leftfinger" reason="Adjacent" />
+  <disable_collisions link1="left_fr3v2_1_hand" link2="left_fr3v2_1_link7" reason="Rigid assembly" />
+  <disable_collisions link1="left_fr3v2_1_hand" link2="left_fr3v2_1_rightfinger" reason="Adjacent" />
+  <disable_collisions link1="left_fr3v2_1_link0" link2="left_fr3v2_1_link1" reason="Adjacent" />
+  <disable_collisions link1="left_fr3v2_1_link0" link2="right_fr3v2_1_link0" reason="Rigid assembly" />
+  <disable_collisions link1="left_fr3v2_1_link1" link2="left_fr3v2_1_link2" reason="Adjacent" />
+  <disable_collisions link1="left_fr3v2_1_link2" link2="left_fr3v2_1_link3" reason="Adjacent" />
+  <disable_collisions link1="left_fr3v2_1_link3" link2="left_fr3v2_1_link4" reason="Adjacent" />
+  <disable_collisions link1="left_fr3v2_1_link4" link2="left_fr3v2_1_link5" reason="Adjacent" />
+  <disable_collisions link1="left_fr3v2_1_link5" link2="left_fr3v2_1_link6" reason="Adjacent" />
+  <disable_collisions link1="left_fr3v2_1_link6" link2="left_fr3v2_1_link7" reason="Adjacent" />
+  <disable_collisions link1="right_fr3v2_1_hand" link2="right_fr3v2_1_leftfinger" reason="Adjacent" />
+  <disable_collisions link1="right_fr3v2_1_hand" link2="right_fr3v2_1_link7" reason="Rigid assembly" />
+  <disable_collisions link1="right_fr3v2_1_hand" link2="right_fr3v2_1_rightfinger" reason="Adjacent" />
+  <disable_collisions link1="right_fr3v2_1_link0" link2="right_fr3v2_1_link1" reason="Adjacent" />
+  <disable_collisions link1="right_fr3v2_1_link1" link2="right_fr3v2_1_link2" reason="Adjacent" />
+  <disable_collisions link1="right_fr3v2_1_link2" link2="right_fr3v2_1_link3" reason="Adjacent" />
+  <disable_collisions link1="right_fr3v2_1_link3" link2="right_fr3v2_1_link4" reason="Adjacent" />
+  <disable_collisions link1="right_fr3v2_1_link4" link2="right_fr3v2_1_link5" reason="Adjacent" />
+  <disable_collisions link1="right_fr3v2_1_link5" link2="right_fr3v2_1_link6" reason="Adjacent" />
+  <disable_collisions link1="right_fr3v2_1_link6" link2="right_fr3v2_1_link7" reason="Adjacent" />
+  <disable_collisions link1="argo_drive_front_fixed_link" link2="argo_drive_front_link" reason="Wheel housing assembly" />
+  <disable_collisions link1="argo_drive_rear_fixed_link" link2="argo_drive_rear_link" reason="Wheel housing assembly" />
+  <disable_collisions link1="base_link" link2="argo_drive_front_link" reason="Wheel housing assembly" />
+  <disable_collisions link1="base_link" link2="argo_drive_rear_link" reason="Wheel housing assembly" />
+  <disable_collisions link1="base_link" link2="caster_front_left_link" reason="Wheel housing assembly" />
+  <disable_collisions link1="base_link" link2="caster_rear_right_link" reason="Wheel housing assembly" />
+  <disable_collisions link1="left_fr3v2_1_leftfinger" link2="left_fr3v2_1_rightfinger" reason="Closed gripper self-contact" />
+  <disable_collisions link1="right_fr3v2_1_leftfinger" link2="right_fr3v2_1_rightfinger" reason="Closed gripper self-contact" />
+  <passive_joint name="caster_front_left_steering_joint" />
+  <passive_joint name="caster_front_left_joint" />
+  <passive_joint name="rocker_arm_joint" />
+  <passive_joint name="caster_rear_right_steering_joint" />
+  <passive_joint name="caster_rear_right_joint" />
+  <disable_collisions link1="argo_drive_front_fixed_link" link2="front_realsense_d455_link" reason="Rigid assembly" />
+  <disable_collisions link1="argo_drive_front_fixed_link" link2="imu_imu_link" reason="Rigid assembly" />
+  <disable_collisions link1="argo_drive_front_fixed_link" link2="lidar_front_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="argo_drive_front_fixed_link" link2="lidar_rear_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="argo_drive_front_fixed_link" link2="rear_realsense_d455_link" reason="Rigid assembly" />
+  <disable_collisions link1="argo_drive_rear_fixed_link" link2="rocker_arm_link" reason="Rigid assembly" />
+  <disable_collisions link1="base_link" link2="front_realsense_d455_link" reason="Rigid assembly" />
+  <disable_collisions link1="base_link" link2="imu_imu_link" reason="Rigid assembly" />
+  <disable_collisions link1="base_link" link2="lidar_front_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="base_link" link2="lidar_rear_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="base_link" link2="rear_realsense_d455_link" reason="Rigid assembly" />
+  <disable_collisions link1="base_link" link2="rocker_arm_link" reason="Adjacent" />
+  <disable_collisions link1="caster_front_left_fixed_link" link2="front_realsense_d455_link" reason="Rigid assembly" />
+  <disable_collisions link1="caster_front_left_fixed_link" link2="imu_imu_link" reason="Rigid assembly" />
+  <disable_collisions link1="caster_front_left_fixed_link" link2="lidar_front_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="caster_front_left_fixed_link" link2="lidar_rear_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="caster_front_left_fixed_link" link2="rear_realsense_d455_link" reason="Rigid assembly" />
+  <disable_collisions link1="caster_rear_right_fixed_link" link2="rocker_arm_link" reason="Rigid assembly" />
+  <disable_collisions link1="fr3_duo_mount_mounting_point" link2="head_zed_mini_link" reason="Rigid assembly" />
+  <disable_collisions link1="franka_spine" link2="front_realsense_d455_link" reason="Rigid assembly" />
+  <disable_collisions link1="franka_spine" link2="imu_imu_link" reason="Rigid assembly" />
+  <disable_collisions link1="franka_spine" link2="lidar_front_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="franka_spine" link2="lidar_rear_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="franka_spine" link2="rear_realsense_d455_link" reason="Rigid assembly" />
+  <disable_collisions link1="front_realsense_d455_link" link2="imu_imu_link" reason="Rigid assembly" />
+  <disable_collisions link1="front_realsense_d455_link" link2="lidar_front_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="front_realsense_d455_link" link2="lidar_rear_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="front_realsense_d455_link" link2="rear_realsense_d455_link" reason="Rigid assembly" />
+  <disable_collisions link1="head_link" link2="head_zed_mini_link" reason="Rigid assembly" />
+  <disable_collisions link1="head_zed_mini_link" link2="left_fr3v2_1_link0" reason="Rigid assembly" />
+  <disable_collisions link1="head_zed_mini_link" link2="right_fr3v2_1_link0" reason="Rigid assembly" />
+  <disable_collisions link1="imu_imu_link" link2="lidar_front_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="imu_imu_link" link2="lidar_rear_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="imu_imu_link" link2="rear_realsense_d455_link" reason="Rigid assembly" />
+  <disable_collisions link1="left_d435_link" link2="left_fr3v2_1_hand" reason="Rigid assembly" />
+  <disable_collisions link1="left_d435_link" link2="left_fr3v2_1_link7" reason="Rigid assembly" />
+  <disable_collisions link1="left_d435_link" link2="left_wrist_camera_mount_link" reason="Rigid assembly" />
+  <disable_collisions link1="left_fr3v2_1_hand" link2="left_wrist_camera_mount_link" reason="Rigid assembly" />
+  <disable_collisions link1="left_fr3v2_1_link7" link2="left_wrist_camera_mount_link" reason="Rigid assembly" />
+  <disable_collisions link1="lidar_front_nanoscan3_link" link2="lidar_rear_nanoscan3_link" reason="Rigid assembly" />
+  <disable_collisions link1="lidar_front_nanoscan3_link" link2="rear_realsense_d455_link" reason="Rigid assembly" />
+  <disable_collisions link1="lidar_rear_nanoscan3_link" link2="rear_realsense_d455_link" reason="Rigid assembly" />
+  <disable_collisions link1="right_d435_link" link2="right_fr3v2_1_hand" reason="Rigid assembly" />
+  <disable_collisions link1="right_d435_link" link2="right_fr3v2_1_link7" reason="Rigid assembly" />
+  <disable_collisions link1="right_d435_link" link2="right_wrist_camera_mount_link" reason="Rigid assembly" />
+  <disable_collisions link1="right_fr3v2_1_hand" link2="right_wrist_camera_mount_link" reason="Rigid assembly" />
+  <disable_collisions link1="right_fr3v2_1_link7" link2="right_wrist_camera_mount_link" reason="Rigid assembly" />
+</robot>
