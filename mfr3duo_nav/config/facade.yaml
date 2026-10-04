@@ -1,0 +1,14 @@
+/**:
+  ros__parameters:
+    navigator:
+      map_frame: map
+      base_frame: base_link
+      map_topic: map
+      odom_topic: /tmr_controller/odom
+      initial_pose_topic: initialpose
+      navigate_to_action: navigate_to_pose
+      navigate_through_action: navigate_through_poses
+      goal_response_timeout: 2.0
+      navigation_timeout: 120.0
+      terminal_timeout: 4.0
+      state_timeout: 1.0

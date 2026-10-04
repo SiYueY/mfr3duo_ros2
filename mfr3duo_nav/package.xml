@@ -2,12 +2,23 @@
 <package format="3">
   <name>mfr3duo_nav</name>
   <version>0.1.0</version>
-  <description>Navigation integration package skeleton for Mobile FR3 Duo.</description>
+  <description>Static-map omnidirectional navigation for Mobile FR3 Duo.</description>
   <maintainer email="maintainers@example.com">mfr3duo maintainers</maintainer>
   <license>Apache-2.0</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>mfr3duo_description</depend>
   <depend>nav2_bringup</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>nav2_msgs</depend>
+  <depend>lifecycle_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_msgs</depend>
+  <exec_depend>mfr3duo_control</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <test_depend>mfr3duo_moveit</test_depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>
