@@ -76,6 +76,7 @@ private:
     JointValues spine_{};
     std::array<JointValues, 4> tmr_{};
     std::array<GripperValues, 2> grippers_{};
+    std::array<std::array<double, 2>, 2> fingers_{};
     std::array<double, 10> imu_{};
 
     std::array<JointControlMode, 2> arm_modes_{

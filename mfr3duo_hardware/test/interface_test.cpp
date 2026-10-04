@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 
     const auto states = system.export_state_interfaces();
     auto commands = system.export_command_interfaces();
-    if (!check(states.size() == 70, "wrong state interface count") ||
+    if (!check(states.size() == 74, "wrong state interface count") ||
         !check(commands.size() == 53, "wrong command interface count"))
         return 1;
     const auto has = [](const auto& items, const std::string& name) {
@@ -112,6 +112,24 @@ int main(int argc, char** argv) {
             running.on_configure(lifecycle_state) == CallbackReturn::SUCCESS,
             "runtime configure failed"))
         return 1;
+    const auto running_states = running.export_state_interfaces();
+    const auto verify_projection = [&] {
+        const auto value = [&](const std::string& name) {
+            return std::find_if(
+                       running_states.begin(), running_states.end(),
+                       [&](const auto& item) { return item.get_name() == name; })
+                ->get_value();
+        };
+        for (const char* side : {"left", "right"}) {
+            const std::string prefix(side);
+            if (value(prefix + "_fr3v2_1_finger_joint1/position") !=
+                    value(prefix + "_gripper/width") * 0.5 ||
+                value(prefix + "_fr3v2_1_finger_joint1/velocity") !=
+                    value(prefix + "_gripper/velocity") * 0.5)
+                return false;
+        }
+        return true;
+    };
     auto running_commands = running.export_command_interfaces();
     const auto command = [&](const std::string& name) -> hardware_interface::CommandInterface* {
         const auto found = std::find_if(
@@ -146,6 +164,20 @@ int main(int argc, char** argv) {
                 running.read(now, period) == return_type::OK,
             "control cycle did not recover from rejected mode switch"))
         return 1;
+    for (const char* side : {"left", "right"}) {
+        const std::string prefix(side);
+        command(prefix + "_gripper/width")->set_value(0.04);
+        command(prefix + "_gripper/velocity")->set_value(0.05);
+        command(prefix + "_gripper/effort")->set_value(20.0);
+    }
+    for (int cycle = 0; cycle < 150; ++cycle) {
+        if (!check(
+                running.write(now, period) == return_type::OK &&
+                    running.read(now, period) == return_type::OK,
+                "finger motion cycle failed") ||
+            !check(verify_projection(), "finger snapshot projection mismatch"))
+            return 1;
+    }
     drive_command->set_value(2.0);
     if (!check(
             running.on_deactivate(lifecycle_state) == CallbackReturn::SUCCESS,

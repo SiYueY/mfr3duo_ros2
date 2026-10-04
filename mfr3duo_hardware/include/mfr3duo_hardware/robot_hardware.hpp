@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <memory>
+#include <string>
 
 #include "mfr3duo_hardware/robot_types.hpp"
 #include "mfr3duo_hardware/visibility_control.hpp"
@@ -22,6 +23,10 @@ namespace mfr3duo_hardware {
 struct RobotHardwareOptions {
     std::chrono::nanoseconds control_period{std::chrono::milliseconds(2)};
     bool viewer_enabled{false};
+    // Empty selects the canonical description scene.
+    std::string model_path;
+    std::string initial_keyframe{"home"};
+    std::vector<SimulationObjectMapping> grasp_objects;
 };
 
 /**
@@ -77,6 +82,13 @@ public:
 
     /** @brief Read the coherent motion snapshot produced by update(). */
     bool read_state(RobotState& state) const;
+
+    /** @brief Read the five unactuated chassis joints from the same simulation instance. */
+    bool read_state(PassiveJointStates& state) const;
+    /** @brief Observed world pose from this backend instance, outside the command path. */
+    bool read_state(BasePoseState& state) const;
+    bool observe_grasp(
+        const std::string& object_id, GraspManipulator hand, GraspObservation& observation) const;
 
     /** @brief Read the base IMU. */
     bool read_state(ImuState& state) const;

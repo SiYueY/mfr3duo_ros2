@@ -22,8 +22,33 @@ constexpr std::array<const char*, 14> kCameraNames{
 
 }  // namespace
 
-Ros2SensorAdapter::Ros2SensorAdapter(RobotHardware& robot)
+Ros2SensorAdapter::Ros2SensorAdapter(
+    RobotHardware& robot, const std::vector<SimulationObjectMapping>& objects)
 : robot_(robot), node_(std::make_shared<rclcpp::Node>("mfr3duo_sensor_adapter")) {
+    const auto objects_root = node_->declare_parameter<std::string>(
+        "perception.objects_topic_prefix", "/perception/objects");
+    const auto tools_root =
+        node_->declare_parameter<std::string>("perception.tools_topic_prefix", "/perception/tools");
+    std::array<rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr, 2> tools;
+    for (const auto& object : objects) {
+        auto object_publisher = node_->create_publisher<geometry_msgs::msg::PoseStamped>(
+            objects_root + "/" + object.object_id + "/pose", 10);
+        for (std::size_t i = 0; i < 2; ++i) {
+            if (!tools[i])
+                tools[i] = node_->create_publisher<geometry_msgs::msg::PoseStamped>(
+                    tools_root + (i == 0 ? "/left/pose" : "/right/pose"), 10);
+            observation_publishers_.push_back(
+                {object.object_id, i == 0 ? GraspManipulator::Left : GraspManipulator::Right,
+                 i == 0 ? object_publisher : nullptr, tools[i]});
+        }
+    }
+    RCLCPP_INFO(
+        node_->get_logger(), "Perception poses are simulation ground truth, not camera detections");
+    passive_publisher_ = node_->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
+    base_pose_publisher_ = node_->create_publisher<geometry_msgs::msg::PoseStamped>(
+        "sensors/simulation/base_pose", 10);
+    time_reference_publisher_ = node_->create_publisher<sensor_msgs::msg::TimeReference>(
+        "sensors/simulation/time_reference", 10);
     for (std::size_t index = 0; index < kLidarNames.size(); ++index) {
         lidar_publishers_[index] = node_->create_publisher<sensor_msgs::msg::LaserScan>(
             std::string("sensors/") + kLidarNames[index] + "/scan", 10);
@@ -55,13 +80,53 @@ rclcpp::Time Ros2SensorAdapter::sample_stamp(std::uint64_t timestamp_ns) const {
 }
 
 void Ros2SensorAdapter::run() {
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(node_);
     while (running_.load()) {
         // Re-anchor the robot clock on the coherent snapshot so stamps stay near
         // wall time when physics runs slower than real time.
         RobotState state;
         if (robot_.read_state(state)) {
+            if (state.sequence != motion_sequence_) {
+                motion_sequence_ = state.sequence;
+                motion_received_ = std::chrono::steady_clock::now();
+            }
             clock_epoch_ = node_->now() - rclcpp::Duration::from_nanoseconds(
                                               static_cast<std::int64_t>(state.timestamp_ns));
+        }
+        executor.spin_some();
+        publish_observations();
+        PassiveJointStates passive_state;
+        BasePoseState base_pose;
+        if (robot_.read_state(base_pose)) {
+            geometry_msgs::msg::PoseStamped pose;
+            pose.header.stamp = sample_stamp(base_pose.timestamp_ns);
+            pose.header.frame_id = "simulation_world";
+            pose.pose.position.x = base_pose.position.x;
+            pose.pose.position.y = base_pose.position.y;
+            pose.pose.position.z = base_pose.position.z;
+            pose.pose.orientation.x = base_pose.orientation.x;
+            pose.pose.orientation.y = base_pose.orientation.y;
+            pose.pose.orientation.z = base_pose.orientation.z;
+            pose.pose.orientation.w = base_pose.orientation.w;
+            sensor_msgs::msg::TimeReference reference;
+            reference.header = pose.header;
+            reference.time_ref = rclcpp::Time(static_cast<std::int64_t>(base_pose.timestamp_ns));
+            reference.source = "same_instance_mujoco";
+            base_pose_publisher_->publish(pose);
+            time_reference_publisher_->publish(reference);
+        }
+        if (robot_.read_state(passive_state)) {
+            sensor_msgs::msg::JointState passive;
+            passive.header.stamp = sample_stamp(passive_state.timestamp_ns);
+            passive.name = {
+                "caster_front_left_steering_joint", "caster_front_left_joint", "rocker_arm_joint",
+                "caster_rear_right_steering_joint", "caster_rear_right_joint"};
+            for (const auto& joint : passive_state.joints) {
+                passive.position.push_back(joint.position);
+                passive.velocity.push_back(joint.velocity);
+            }
+            passive_publisher_->publish(std::move(passive));
         }
         for (std::size_t index = 0; index < kLidarNames.size(); ++index) {
             publish_lidar(static_cast<Lidar>(index), index);
@@ -70,6 +135,36 @@ void Ros2SensorAdapter::run() {
             publish_camera(static_cast<Camera>(index), index);
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    executor.remove_node(node_);
+}
+
+void Ros2SensorAdapter::publish_observations() {
+    if (std::chrono::steady_clock::now() - motion_received_ > std::chrono::milliseconds(300))
+        return;
+    for (const auto& publishers : observation_publishers_) {
+        GraspObservation observation;
+        if (!robot_.observe_grasp(publishers.object_id, publishers.hand, observation) ||
+            !observation.valid || !observation.object_visible)
+            continue;
+        const auto convert = [&](const std::array<double, 3>& position,
+                                 const std::array<double, 4>& orientation) {
+            geometry_msgs::msg::PoseStamped pose;
+            pose.header.frame_id = "simulation_world";
+            pose.header.stamp = sample_stamp(observation.timestamp_ns);
+            pose.pose.position.x = position[0];
+            pose.pose.position.y = position[1];
+            pose.pose.position.z = position[2];
+            pose.pose.orientation.x = orientation[0];
+            pose.pose.orientation.y = orientation[1];
+            pose.pose.orientation.z = orientation[2];
+            pose.pose.orientation.w = orientation[3];
+            return pose;
+        };
+        const auto object = convert(observation.object_position, observation.object_orientation);
+        const auto tool = convert(observation.tool_position, observation.tool_orientation);
+        if (publishers.object) publishers.object->publish(object);
+        publishers.tool->publish(tool);
     }
 }
 

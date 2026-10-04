@@ -20,6 +20,7 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 # ROS 2 adapter library. It adapts RobotHardware to ros2_control and to ROS
 # sensor topics; it is the only target that may depend on ROS 2.
@@ -31,7 +32,7 @@ target_include_directories(mfr3duo_ros2_adapter PRIVATE ${CMAKE_CURRENT_SOURCE_D
 target_compile_options(mfr3duo_ros2_adapter PRIVATE -Wall -Wextra -Wpedantic)
 target_link_libraries(mfr3duo_ros2_adapter mfr3duo_hardware)
 ament_target_dependencies(mfr3duo_ros2_adapter
-  hardware_interface pluginlib rclcpp rclcpp_lifecycle sensor_msgs)
+  hardware_interface pluginlib rclcpp rclcpp_lifecycle sensor_msgs geometry_msgs)
 
 pluginlib_export_plugin_description_file(hardware_interface mfr3duo_hardware.xml)
 
@@ -43,11 +44,12 @@ install(TARGETS mfr3duo_hardware mfr3duo_ros2_adapter
 # headers inside src/ and are not part of the user-facing SDK.
 install(DIRECTORY include/ DESTINATION include)
 install(DIRECTORY ros2_control/ DESTINATION share/${PROJECT_NAME}/ros2_control)
-install(DIRECTORY config/ DESTINATION share/${PROJECT_NAME}/config)
-install(DIRECTORY launch/ DESTINATION share/${PROJECT_NAME}/launch)
 
 if(BUILD_TESTING)
   find_package(Python3 COMPONENTS Interpreter REQUIRED)
+  add_test(NAME grasp_observation_runtime COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/grasp_observation_runtime_test.py)
+  set_tests_properties(grasp_observation_runtime PROPERTIES TIMEOUT 90 RUN_SERIAL TRUE)
 
   # MuJoCo exports its bundled tinyxml2 symbols. Every test that links MuJoCo and
   # then loads the ROS 2 middleware must prefer the system tinyxml2 instead; the

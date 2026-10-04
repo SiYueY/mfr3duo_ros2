@@ -5,6 +5,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <iomanip>
+#include <execinfo.h>
 #include <iostream>
 #include <new>
 #include <string_view>
@@ -16,19 +17,33 @@ namespace {
 std::atomic<std::size_t> allocations{0};
 thread_local bool audit_thread{false};
 thread_local std::size_t thread_allocations{0};
+thread_local std::array<void*, 32> first_allocation_trace{};
+thread_local int first_allocation_trace_size{0};
+
+void record_allocation() {
+    if (!audit_thread) return;
+    ++thread_allocations;
+    if (first_allocation_trace_size != 0) return;
+    // Capture the first failing path in fixed storage. Disable our audit while
+    // unwinding so diagnostics cannot be mistaken for backend allocations.
+    audit_thread = false;
+    first_allocation_trace_size =
+        backtrace(first_allocation_trace.data(), first_allocation_trace.size());
+    audit_thread = true;
+}
 
 }  // namespace
 
 void* operator new(std::size_t size) {
     allocations.fetch_add(1, std::memory_order_relaxed);
-    if (audit_thread) ++thread_allocations;
+    record_allocation();
     if (void* memory = std::malloc(size)) return memory;
     throw std::bad_alloc();
 }
 
 void* operator new[](std::size_t size) {
     allocations.fetch_add(1, std::memory_order_relaxed);
-    if (audit_thread) ++thread_allocations;
+    record_allocation();
     if (void* memory = std::malloc(size)) return memory;
     throw std::bad_alloc();
 }
@@ -108,6 +123,7 @@ int run_benchmark(std::chrono::nanoseconds control_period, const char* label) {
     std::array<double, kCycles> cycle_durations{};
     const auto before_allocations = allocations.load(std::memory_order_relaxed);
     const auto before_thread_allocations = thread_allocations;
+    first_allocation_trace_size = 0;
     audit_thread = true;
     const auto total_start = Clock::now();
     for (std::size_t index = 0; index < kCycles; ++index) {
@@ -139,6 +155,7 @@ int run_benchmark(std::chrono::nanoseconds control_period, const char* label) {
               << "  control_thread_cpp_new_calls=" << thread_allocations_used << '\n';
     if (thread_allocations_used != 0) {
         std::cerr << label << " control cycle allocated on the control thread\n";
+        backtrace_symbols_fd(first_allocation_trace.data(), first_allocation_trace_size, 2);
         return EXIT_FAILURE;
     }
 

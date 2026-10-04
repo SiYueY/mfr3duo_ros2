@@ -1,0 +1,15 @@
+{
+  "repository": "https://github.com/frankarobotics/franka_ros2",
+  "branch": "jazzy",
+  "commit": "6cedf7f1a2ca280c433f643eae697be23eb2a15e",
+  "files": [
+    "action/Move.action",
+    "action/Grasp.action",
+    "msg/GraspEpsilon.msg"
+  ],
+  "sha256": {
+    "action/Move.action": "349bd984b63d6510e61492b8b3352070ff4b9ef6d1825f8ae86ad5bc9462b25b",
+    "action/Grasp.action": "e129fa8bfc57b36851e4f3466af34d9a5a23935a9566c24bd981818047fdb6d8",
+    "msg/GraspEpsilon.msg": "e6c8564c1603c990487a3c3c7f123e459cd4ec7619c98c148675601d55a0ba3b"
+  }
+}

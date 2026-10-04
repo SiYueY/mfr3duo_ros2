@@ -1,5 +1,6 @@
 #include "ros2_control_adapter.hpp"
 
+#include <sstream>
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -25,6 +26,8 @@ constexpr std::array<const char*, 10> kImuInterfaces{
 constexpr std::array<const char*, 4> kTmrNames{
     "tmrv0_2_joint_0", "tmrv0_2_joint_1", "tmrv0_2_joint_2", "tmrv0_2_joint_3"};
 constexpr std::array<const char*, 2> kGripperNames{"left_gripper", "right_gripper"};
+constexpr std::array<const char*, 2> kFingerNames{
+    "left_fr3v2_1_finger_joint1", "right_fr3v2_1_finger_joint1"};
 constexpr const char* kSpineName = "franka_spine_vertical_joint";
 constexpr const char* kControlPeriodParameter = "control_period";
 
@@ -98,7 +101,7 @@ hardware_interface::CallbackReturn Ros2ControlAdapter::on_init(
 }
 
 bool Ros2ControlAdapter::valid_info() const {
-    if (info_.joints.size() != 19 || info_.gpios.size() != 2 || info_.sensors.size() != 1) {
+    if (info_.joints.size() != 21 || info_.gpios.size() != 2 || info_.sensors.size() != 1) {
         return false;
     }
     const auto find_named =
@@ -119,6 +122,10 @@ bool Ros2ControlAdapter::valid_info() const {
                 return false;
             }
         }
+    }
+    for (const auto* name : kFingerNames) {
+        const auto* item = find_named(info_.joints, name);
+        if (item == nullptr || !matches(*item, name, {}, {"position", "velocity"})) return false;
     }
     const auto* spine = find_named(info_.joints, kSpineName);
     if (spine == nullptr || !matches(*spine, kSpineName, {"position"}, {"position", "velocity"})) {
@@ -154,9 +161,30 @@ hardware_interface::CallbackReturn Ros2ControlAdapter::on_configure(
     RobotHardwareOptions options;
     options.control_period = control_period_;
     options.viewer_enabled = viewer_enabled_;
+    const auto model = info_.hardware_parameters.find("model_path");
+    if (model != info_.hardware_parameters.end()) options.model_path = model->second;
+    const auto keyframe = info_.hardware_parameters.find("initial_keyframe");
+    if (keyframe != info_.hardware_parameters.end()) options.initial_keyframe = keyframe->second;
+    const auto mappings = info_.hardware_parameters.find("grasp_objects");
+    if (mappings != info_.hardware_parameters.end()) {
+        std::istringstream input(mappings->second);
+        std::string entry;
+        while (std::getline(input, entry, ';')) {
+            if (entry.empty()) continue;
+            std::istringstream fields(entry);
+            SimulationObjectMapping mapping;
+            std::string extra;
+            if (!std::getline(fields, mapping.object_id, '=') ||
+                !std::getline(fields, mapping.body_name, '=') ||
+                !std::getline(fields, mapping.collision_geom, '=') ||
+                std::getline(fields, extra, '='))
+                return hardware_interface::CallbackReturn::ERROR;
+            options.grasp_objects.push_back(std::move(mapping));
+        }
+    }
     if (!robot_.initialize(options)) return hardware_interface::CallbackReturn::ERROR;
     try {
-        sensor_adapter_ = std::make_unique<Ros2SensorAdapter>(robot_);
+        sensor_adapter_ = std::make_unique<Ros2SensorAdapter>(robot_, options.grasp_objects);
     } catch (const std::exception&) {
         robot_.shutdown();
         return hardware_interface::CallbackReturn::ERROR;
@@ -220,7 +248,7 @@ hardware_interface::CallbackReturn Ros2ControlAdapter::on_error(
 
 std::vector<hardware_interface::StateInterface> Ros2ControlAdapter::export_state_interfaces() {
     std::vector<hardware_interface::StateInterface> output;
-    output.reserve(14 * 3 + 2 + 4 * 2 + 2 * 4 + 10);
+    output.reserve(14 * 3 + 2 + 4 * 2 + 2 * 4 + 4 + 10);
     for (std::size_t index = 0; index < arms_.size(); ++index) {
         const auto name = arm_name(index / kArmCount, index % kArmCount);
         for (std::size_t channel = 0; channel < 3; ++channel) {
@@ -241,6 +269,11 @@ std::vector<hardware_interface::StateInterface> Ros2ControlAdapter::export_state
             output.emplace_back(
                 kGripperNames[index], kGripperStates[channel], &grippers_[index].state[channel]);
         }
+    }
+    for (std::size_t side = 0; side < fingers_.size(); ++side) {
+        for (std::size_t channel = 0; channel < 2; ++channel)
+            output.emplace_back(
+                kFingerNames[side], kJointInterfaces[channel], &fingers_[side][channel]);
     }
     for (std::size_t channel = 0; channel < imu_.size(); ++channel) {
         output.emplace_back("imu", kImuInterfaces[channel], &imu_[channel]);
@@ -288,6 +321,7 @@ void Ros2ControlAdapter::copy_state(const RobotState& state) {
     }
     const std::array<GripperState, 2> grippers{state.left_gripper, state.right_gripper};
     for (std::size_t index = 0; index < grippers.size(); ++index) {
+        fingers_[index] = {grippers[index].width * 0.5, grippers[index].velocity * 0.5};
         grippers_[index].state = {
             grippers[index].width, grippers[index].velocity, grippers[index].effort,
             grippers[index].stalled ? 1.0 : 0.0};

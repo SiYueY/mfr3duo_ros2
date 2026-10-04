@@ -141,6 +141,13 @@ bool check_safe_activation(RobotHardware& robot, const RobotState& initial) {
     if (!check(robot.activate(), "activate failed")) return false;
     RobotState state;
     if (!check(robot.read_state(state), "read after activate failed")) return false;
+    mfr3duo_hardware::BasePoseState base_pose;
+    if (!check(robot.read_state(base_pose), "same-instance base pose unavailable")) return false;
+    if (!check(base_pose.timestamp_ns <= state.timestamp_ns &&
+                   state.timestamp_ns - base_pose.timestamp_ns <= 1'000'001 &&
+                   finite(base_pose.position.x) && finite(base_pose.position.y) &&
+                   finite(base_pose.orientation.w),
+               "base pose sample time or values invalid")) return false;
     if (!check(motion_state_is_finite(state), "state after activate is not finite")) {
         return false;
     }
@@ -195,6 +202,16 @@ bool check_motion_snapshot(RobotHardware& robot) {
             second.timestamp_ns > first.timestamp_ns, "RobotState timestamp_ns did not advance")) {
         return false;
     }
+    mfr3duo_hardware::PassiveJointStates passive;
+    if (!check(robot.read_state(passive), "passive sensor read failed")) return false;
+    if (!check(
+            passive.timestamp_ns == second.timestamp_ns, "passive/whole motion timestamp mismatch"))
+        return false;
+    for (const auto& joint : passive.joints)
+        if (!check(
+                std::isfinite(joint.position) && std::isfinite(joint.velocity),
+                "passive sensor not finite"))
+            return false;
     return check(motion_state_is_finite(second), "RobotState is not finite");
 }
 

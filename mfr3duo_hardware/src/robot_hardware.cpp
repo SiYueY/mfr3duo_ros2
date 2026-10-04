@@ -355,13 +355,20 @@ bool RobotHardware::initialize(const RobotHardwareOptions& options) {
 
     mfr3duo_mujoco::SimulationOptions backend;
     backend.viewer_enabled = options.viewer_enabled;
+    backend.initial_keyframe = options.initial_keyframe;
+    for (const auto& mapping : options.grasp_objects)
+        backend.grasp_objects.push_back(
+            {mapping.object_id, mapping.body_name, mapping.collision_geom});
     backend.cameras_enabled = true;
     backend.lidars_enabled = true;
     backend.imu_enabled = true;
     backend.camera_width = 320;
     backend.camera_height = 180;
     backend.camera_period = 0.04;
-    if (!impl_->simulation.initialize(backend)) return false;
+    const bool initialized = options.model_path.empty()
+                                 ? impl_->simulation.initialize(backend)
+                                 : impl_->simulation.initialize(options.model_path, backend);
+    if (!initialized) return false;
 
     // Take the physics period from the backend instead of duplicating it here so
     // the backend stays the single source of truth. This advances the simulation
@@ -444,6 +451,45 @@ bool RobotHardware::read_state(RobotState& state) const {
     return impl_->snapshot(state);
 }
 
+bool RobotHardware::observe_grasp(
+    const std::string& object_id, GraspManipulator hand, GraspObservation& observation) const {
+    observation = {};
+    if (impl_ == nullptr || !impl_->is_active()) {
+        observation.diagnostic = "hardware not active";
+        return false;
+    }
+    mfr3duo_mujoco::Gripper backend_hand;
+    if (hand == GraspManipulator::Left)
+        backend_hand = mfr3duo_mujoco::Gripper::Left;
+    else if (hand == GraspManipulator::Right)
+        backend_hand = mfr3duo_mujoco::Gripper::Right;
+    else {
+        observation.diagnostic = "invalid manipulator";
+        return false;
+    }
+    mfr3duo_mujoco::GraspObservation source;
+    const bool valid = impl_->simulation.observe_grasp(object_id, backend_hand, source);
+    observation.valid = source.valid;
+    observation.object_visible = source.object_visible;
+    observation.left_finger_contact = source.left_finger_contact;
+    observation.right_finger_contact = source.right_finger_contact;
+    observation.sequence = source.sequence;
+    observation.timestamp_ns = to_nanoseconds(source.timestamp);
+    observation.object_position = {
+        source.object_pose.position.x, source.object_pose.position.y,
+        source.object_pose.position.z};
+    observation.object_orientation = {
+        source.object_pose.orientation.x, source.object_pose.orientation.y,
+        source.object_pose.orientation.z, source.object_pose.orientation.w};
+    observation.tool_position = {
+        source.tool_pose.position.x, source.tool_pose.position.y, source.tool_pose.position.z};
+    observation.tool_orientation = {
+        source.tool_pose.orientation.x, source.tool_pose.orientation.y,
+        source.tool_pose.orientation.z, source.tool_pose.orientation.w};
+    observation.diagnostic = std::move(source.diagnostic);
+    return valid;
+}
+
 bool RobotHardware::read_state(ImuState& state) const {
     if (impl_ == nullptr || !impl_->is_active()) return false;
     // The backend fills frame_id with a string longer than the small-string
@@ -452,6 +498,37 @@ bool RobotHardware::read_state(ImuState& state) const {
     thread_local mfr3duo_mujoco::ImuState scratch;
     if (!impl_->simulation.read_state(scratch)) return false;
     copy_imu_state(scratch, state);
+    return true;
+}
+
+bool RobotHardware::read_state(PassiveJointStates& state) const {
+    if (impl_ == nullptr || !impl_->is_active()) return false;
+    mfr3duo_mujoco::TmrPassiveState source;
+    if (!impl_->simulation.read_state(source)) return false;
+    PassiveJointStates result;
+    result.timestamp_ns = to_nanoseconds(source.timestamp);
+    result.joints = {
+        {{source.front_caster_steering.position, source.front_caster_steering.velocity},
+         {source.front_caster_wheel.position, source.front_caster_wheel.velocity},
+         {source.rocker_arm.position, source.rocker_arm.velocity},
+         {source.rear_caster_steering.position, source.rear_caster_steering.velocity},
+         {source.rear_caster_wheel.position, source.rear_caster_wheel.velocity}}};
+    state = result;
+    return true;
+}
+
+bool RobotHardware::read_state(BasePoseState& state) const {
+    if (impl_ == nullptr || !impl_->is_active()) return false;
+    mfr3duo_mujoco::BasePoseState source;
+    if (!impl_->simulation.read_state(source)) return false;
+    BasePoseState result;
+    result.sequence = source.sequence;
+    result.timestamp_ns = to_nanoseconds(source.timestamp);
+    result.position = {source.pose.position.x, source.pose.position.y, source.pose.position.z};
+    result.orientation = {
+        source.pose.orientation.x, source.pose.orientation.y, source.pose.orientation.z,
+        source.pose.orientation.w};
+    state = result;
     return true;
 }
 

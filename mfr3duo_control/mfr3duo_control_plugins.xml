@@ -1,0 +1,10 @@
+<library path="mfr3duo_control_plugins">
+  <class name="mfr3duo_control/TmrController" type="mfr3duo_control::TmrController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>Planar body twist to signed steer-drive joint commands.</description>
+  </class>
+  <class name="mfr3duo_control/Mfr3DuoGripperController" type="mfr3duo_control::Mfr3DuoGripperController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>Single finger GripperCommand action to total-width GPIO commands.</description>
+  </class>
+</library>

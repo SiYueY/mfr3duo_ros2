@@ -45,6 +45,9 @@ inline hardware_interface::HardwareInfo make_info(const std::string& control_per
         info.gpios.push_back(component(
             std::string(side) + "_gripper", {"width", "velocity", "effort"},
             {"width", "velocity", "effort", "stalled"}));
+    for (const char* side : {"left", "right"})
+        info.joints.push_back(
+            component(std::string(side) + "_fr3v2_1_finger_joint1", {}, {"position", "velocity"}));
     info.sensors.push_back(component(
         "imu", {},
         {"orientation.x", "orientation.y", "orientation.z", "orientation.w", "angular_velocity.x",

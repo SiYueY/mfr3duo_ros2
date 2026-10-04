@@ -1,4 +1,4 @@
-"""Start the MuJoCo hardware, robot description, and standard controllers."""
+"""Start the MuJoCo hardware, robot description, and command controllers."""
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
@@ -16,19 +16,26 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     share = FindPackageShare("mfr3duo_hardware")
+    control_share = FindPackageShare("mfr3duo_control")
     xacro = PathJoinSubstitution([share, "ros2_control", "mfr3duo.ros2_control.xacro"])
-    config = PathJoinSubstitution([share, "config", "controllers.yaml"])
+    config = PathJoinSubstitution([control_share, "config", "controllers.yaml"])
     # controller_update_rate is the single source of truth: the hardware control
     # period is its reciprocal, so the two can never disagree.
     control_period = PythonExpression(["1.0 / ", LaunchConfiguration("controller_update_rate")])
     description = Command(
         [FindExecutable(name="xacro"), " ", xacro,
          " control_period:=", control_period,
-         " viewer_enabled:=", LaunchConfiguration("viewer_enabled")]
+         " viewer_enabled:=", LaunchConfiguration("viewer_enabled"),
+         " model_path:='", LaunchConfiguration("model_path", default=""), "'",
+         " initial_keyframe:='", LaunchConfiguration("initial_keyframe", default="home"), "'",
+         " grasp_objects:='", LaunchConfiguration("grasp_objects", default=""), "'"]
     )
     return LaunchDescription([
         DeclareLaunchArgument("controller_update_rate", default_value="500"),
         DeclareLaunchArgument("viewer_enabled", default_value="true"),
+        DeclareLaunchArgument("model_path", default_value=""),
+        DeclareLaunchArgument("initial_keyframe", default_value="home"),
+        DeclareLaunchArgument("grasp_objects", default_value=""),
         Node(
             package="robot_state_publisher",
             executable="robot_state_publisher",
@@ -47,8 +54,8 @@ def generate_launch_description():
             package="controller_manager",
             executable="spawner",
             arguments=["joint_state_broadcaster", "imu_broadcaster", "left_arm_controller",
-                       "right_arm_controller", "tmr_steering_controller",
-                       "tmr_drive_controller", "spine_controller",
+                       "right_arm_controller", "tmr_controller", "spine_controller",
+                       "left_gripper_controller", "right_gripper_controller",
                        "--controller-manager-timeout", "120"],
             output="screen",
         ),

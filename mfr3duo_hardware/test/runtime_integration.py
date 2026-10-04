@@ -10,21 +10,32 @@ import time
 import rclpy
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import CameraInfo, Image, Imu, JointState, LaserScan
-from std_msgs.msg import Float64MultiArray
-from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from ament_index_python.packages import get_package_share_directory
+import yaml
 
 
 def main():
     # Keep this integration test separate from any interactive ROS session.
     os.environ["ROS_DOMAIN_ID"] = str(100 + os.getpid() % 100)
-    with tempfile.TemporaryFile(mode="w+") as log:
+    with tempfile.TemporaryFile(mode="w+") as log, tempfile.TemporaryDirectory() as config_dir:
+        # Hardware regression owns only broadcaster fixtures, not motion controllers.
+        xacro = get_package_share_directory("mfr3duo_hardware") + "/ros2_control/mfr3duo.ros2_control.xacro"
+        description = subprocess.check_output(
+            ["xacro", xacro, "viewer_enabled:=false", "control_period:=0.002"], text=True)
+        params = {"controller_manager": {"ros__parameters": {
+            "robot_description": description, "update_rate": 500,
+            "joint_state_broadcaster": {"type": "joint_state_broadcaster/JointStateBroadcaster"},
+            "imu_broadcaster": {"type": "imu_sensor_broadcaster/IMUSensorBroadcaster"},
+        }}, "imu_broadcaster": {"ros__parameters": {"sensor_name": "imu", "frame_id": "imu_imu_sensor_frame"}}}
+        filename = config_dir + "/hardware.yaml"
+        with open(filename, "w") as config:
+            yaml.safe_dump(params, config)
         process = subprocess.Popen(
-            ["ros2", "launch", "mfr3duo_hardware", "mujoco_control.launch.py",
-             "viewer_enabled:=false"],
-            stdout=log,
-            stderr=subprocess.STDOUT,
-            start_new_session=True,
-        )
+            ["ros2", "run", "controller_manager", "ros2_control_node", "--ros-args", "--params-file", filename],
+            stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+        spawner = subprocess.Popen(
+            ["ros2", "run", "controller_manager", "spawner", "joint_state_broadcaster", "imu_broadcaster",
+             "--controller-manager-timeout", "40"], stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
         rclpy.init()
         node = rclpy.create_node("mfr3duo_runtime_integration")
         state = {}
@@ -59,17 +70,6 @@ def main():
                                      on_camera_info, qos_profile_sensor_data),
             node.create_subscription(Imu, "/imu_broadcaster/imu", on_imu, 10),
         ]
-        drive = node.create_publisher(Float64MultiArray,
-                                      "/tmr_drive_controller/commands", 10)
-        steering = node.create_publisher(Float64MultiArray,
-                                         "/tmr_steering_controller/commands", 10)
-        spine = node.create_publisher(Float64MultiArray,
-                                      "/spine_controller/commands", 10)
-        arms = {
-            side: node.create_publisher(JointTrajectory,
-                                        f"/{side}_arm_controller/joint_trajectory", 10)
-            for side in ("left", "right")
-        }
         try:
             deadline = time.monotonic() + 45
             while time.monotonic() < deadline:
@@ -83,65 +83,16 @@ def main():
             else:
                 raise RuntimeError("hardware or sensor topics did not start")
 
-            baseline = state["tmrv0_2_joint_1"][0]
-            target = Float64MultiArray()
-            target.data = [2.0, 2.0]
-            deadline = time.monotonic() + 8
-            while time.monotonic() < deadline:
-                drive.publish(target)
-                rclpy.spin_once(node, timeout_sec=0.05)
-                if state["tmrv0_2_joint_1"][0] > baseline + 0.05:
-                    break
-            else:
-                raise RuntimeError("TMR controller command did not move the wheel")
-            stop = Float64MultiArray()
-            stop.data = [0.0, 0.0]
-            drive.publish(stop)
-
-            steering_baseline = state["tmrv0_2_joint_0"][0]
-            steer = Float64MultiArray()
-            steer.data = [steering_baseline + 0.15, state["tmrv0_2_joint_2"][0]]
-            steering.publish(steer)
-            deadline = time.monotonic() + 5
-            while time.monotonic() < deadline:
-                rclpy.spin_once(node, timeout_sec=0.05)
-                if state["tmrv0_2_joint_0"][0] > steering_baseline + 0.04:
-                    break
-            else:
-                raise RuntimeError("TMR steering controller did not move")
-
-            for side in ("left", "right"):
-                names = [f"{side}_fr3v2_1_joint{number}" for number in range(1, 8)]
-                baseline = state[names[0]][0]
-                trajectory = JointTrajectory()
-                trajectory.joint_names = names
-                point = JointTrajectoryPoint()
-                point.positions = [state[name][0] for name in names]
-                point.positions[0] += 0.04
-                point.time_from_start.sec = 2
-                trajectory.points = [point]
-                arms[side].publish(trajectory)
-                deadline = time.monotonic() + 5
-                while time.monotonic() < deadline:
-                    rclpy.spin_once(node, timeout_sec=0.05)
-                    if state[names[0]][0] > baseline + 0.02:
-                        break
-                else:
-                    raise RuntimeError(f"{side} arm trajectory did not move")
-
-            spine_baseline = state["franka_spine_vertical_joint"][0]
-            height = Float64MultiArray()
-            height.data = [spine_baseline + 0.02]
-            spine.publish(height)
-            deadline = time.monotonic() + 5
-            while time.monotonic() < deadline:
-                rclpy.spin_once(node, timeout_sec=0.05)
-                if state["franka_spine_vertical_joint"][0] > spine_baseline + 0.01:
-                    break
-            else:
-                raise RuntimeError("spine position controller did not move")
-            print("ROS integration: arms, spine, TMR, IMU, Camera, LiDAR passed")
+            assert len(state) >= 21
+            print("Hardware-only integration: joint states, IMU, Camera, CameraInfo, LiDAR passed")
         finally:
+            if spawner.poll() is None:
+                os.killpg(spawner.pid, signal.SIGINT)
+            try:
+                spawner.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                os.killpg(spawner.pid, signal.SIGKILL)
+                spawner.wait()
             subscriptions.clear()
             node.destroy_node()
             rclpy.shutdown()

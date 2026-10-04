@@ -14,6 +14,27 @@
 
 namespace mfr3duo_hardware {
 
+// Standard-C++ simulation observation data; no backend IDs or ROS types.
+struct SimulationObjectMapping {
+    std::string object_id;
+    std::string body_name;
+    std::string collision_geom;
+};
+enum class GraspManipulator : std::uint8_t { Left, Right };
+struct GraspObservation {
+    bool valid{false};
+    bool object_visible{false};
+    bool left_finger_contact{false};
+    bool right_finger_contact{false};
+    std::uint64_t sequence{0};
+    std::uint64_t timestamp_ns{0};
+    std::array<double, 3> object_position{};
+    std::array<double, 4> object_orientation{0, 0, 0, 1};
+    std::array<double, 3> tool_position{};
+    std::array<double, 4> tool_orientation{0, 0, 0, 1};
+    std::string diagnostic;
+};
+
 // ---------------------------------------------------------------------------
 // Motion devices
 // ---------------------------------------------------------------------------
@@ -142,6 +163,19 @@ struct RobotState {
 // Sensors
 // ---------------------------------------------------------------------------
 
+/** @brief Measured position/velocity of one unactuated joint. */
+struct PassiveJointState {
+    double position{0.0};
+    double velocity{0.0};
+};
+
+/** @brief Observed unactuated chassis joints, separate from commanded motion devices. */
+struct PassiveJointStates {
+    std::uint64_t timestamp_ns{0};
+    // Front caster steering/wheel, rocker arm, rear caster steering/wheel.
+    std::array<PassiveJointState, 5> joints{};
+};
+
 /** @brief Three-dimensional vector with Cartesian components. */
 struct Vector3 {
     double x{0.0};
@@ -155,6 +189,14 @@ struct Quaternion {
     double y{0.0};
     double z{0.0};
     double w{1.0};
+};
+
+/** @brief Simulator ground truth, with its actual physics sample time. */
+struct BasePoseState {
+    std::uint64_t sequence{0};
+    std::uint64_t timestamp_ns{0};
+    Vector3 position;
+    Quaternion orientation;
 };
 
 /** @brief State reported by the base IMU. */

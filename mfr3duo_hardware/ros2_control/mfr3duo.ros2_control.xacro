@@ -4,6 +4,9 @@
   <xacro:include filename="$(find mfr3duo_hardware)/ros2_control/mfr3duo_ros2_control_macros.xacro"/>
   <xacro:arg name="control_period" default="0.002"/>
   <xacro:arg name="viewer_enabled" default="true"/>
+  <xacro:arg name="model_path" default=""/>
+  <xacro:arg name="initial_keyframe" default="home"/>
+  <xacro:arg name="grasp_objects" default=""/>
   <xacro:mfr3duo connected_to="base"/>
 
   <ros2_control name="MFR3DuoMujoco" type="system">
@@ -11,6 +14,9 @@
       <plugin>mfr3duo_hardware/Ros2ControlAdapter</plugin>
       <param name="control_period">$(arg control_period)</param>
       <param name="viewer_enabled">$(arg viewer_enabled)</param>
+      <param name="model_path">$(arg model_path)</param>
+      <param name="initial_keyframe">$(arg initial_keyframe)</param>
+      <param name="grasp_objects">$(arg grasp_objects)</param>
     </hardware>
     <xacro:mfr3duo_arm_joint name="left_fr3v2_1_joint1"/>
     <xacro:mfr3duo_arm_joint name="left_fr3v2_1_joint2"/>
@@ -33,6 +39,14 @@
     <xacro:mfr3duo_axis name="tmrv0_2_joint_3" command="velocity"/>
     <xacro:mfr3duo_gripper name="left_gripper"/>
     <xacro:mfr3duo_gripper name="right_gripper"/>
+    <joint name="left_fr3v2_1_finger_joint1">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="right_fr3v2_1_finger_joint1">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
     <xacro:mfr3duo_control_imu name="imu"/>
   </ros2_control>
 </robot>

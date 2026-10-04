@@ -1,0 +1,14 @@
+/**:
+  ros__parameters:
+    execution:
+      goal_response_timeout: 2.0
+      timeout_margin: 2.0
+      cancel_timeout: 1.0
+      terminal_timeout: 2.0
+      gripper_timeout: 10.0
+      navigation_timeout: 120.0
+      task_timeout: 180.0
+    control:
+      state_timeout: 1.0
+      max_linear_velocity: 0.3
+      max_angular_velocity: 0.5
