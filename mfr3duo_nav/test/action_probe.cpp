@@ -215,6 +215,7 @@ int main(int argc, char** argv) {
             std::this_thread::sleep_for(10ms);
         require(
             delayed.wait().code == ErrorCode::Timeout, "local timeout only after remote terminal");
+        require(static_cast<bool>(nav.cancel()), "confirmed timeout releases navigation ownership");
         fixture->mode = Mode::LateReject;
         auto rejected = nav.start_navigate_to(target);
         require(

@@ -159,6 +159,7 @@ bool Ros2ControlAdapter::valid_info() const {
 hardware_interface::CallbackReturn Ros2ControlAdapter::on_configure(
     const rclcpp_lifecycle::State&) {
     RobotHardwareOptions options;
+    options.cameras_on_demand = true;
     options.control_period = control_period_;
     options.viewer_enabled = viewer_enabled_;
     const auto model = info_.hardware_parameters.find("model_path");
@@ -182,9 +183,34 @@ hardware_interface::CallbackReturn Ros2ControlAdapter::on_configure(
             options.grasp_objects.push_back(std::move(mapping));
         }
     }
+    const auto scene_joints = info_.hardware_parameters.find("scene_joints");
+    if (scene_joints != info_.hardware_parameters.end()) {
+        std::istringstream entries(scene_joints->second);
+        std::string entry;
+        while (std::getline(entries, entry, ';')) {
+            if (entry.empty()) continue;
+            std::istringstream fields(entry);
+            SceneJointMapping joint;
+            std::string lower, upper, extra;
+            if (!std::getline(fields, joint.joint_name, '=') || !std::getline(fields, lower, '=') ||
+                !std::getline(fields, upper, '=') || std::getline(fields, extra, '='))
+                return hardware_interface::CallbackReturn::ERROR;
+            try {
+                std::size_t consumed = 0;
+                joint.lower = std::stod(lower, &consumed);
+                if (consumed != lower.size()) return hardware_interface::CallbackReturn::ERROR;
+                joint.upper = std::stod(upper, &consumed);
+                if (consumed != upper.size()) return hardware_interface::CallbackReturn::ERROR;
+            } catch (const std::exception&) {
+                return hardware_interface::CallbackReturn::ERROR;
+            }
+            options.scene_joints.push_back(std::move(joint));
+        }
+    }
     if (!robot_.initialize(options)) return hardware_interface::CallbackReturn::ERROR;
     try {
-        sensor_adapter_ = std::make_unique<Ros2SensorAdapter>(robot_, options.grasp_objects);
+        sensor_adapter_ = std::make_unique<Ros2SensorAdapter>(
+            robot_, options.grasp_objects, options.scene_joints);
     } catch (const std::exception&) {
         robot_.shutdown();
         return hardware_interface::CallbackReturn::ERROR;

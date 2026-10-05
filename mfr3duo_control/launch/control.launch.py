@@ -28,7 +28,8 @@ def generate_launch_description():
          " viewer_enabled:=", LaunchConfiguration("viewer_enabled"),
          " model_path:='", LaunchConfiguration("model_path", default=""), "'",
          " initial_keyframe:='", LaunchConfiguration("initial_keyframe", default="home"), "'",
-         " grasp_objects:='", LaunchConfiguration("grasp_objects", default=""), "'"]
+         " grasp_objects:='", LaunchConfiguration("grasp_objects", default=""), "'",
+         " scene_joints:='", LaunchConfiguration("scene_joints", default=""), "'"]
     )
     return LaunchDescription([
         DeclareLaunchArgument("controller_update_rate", default_value="500"),
@@ -36,6 +37,7 @@ def generate_launch_description():
         DeclareLaunchArgument("model_path", default_value=""),
         DeclareLaunchArgument("initial_keyframe", default_value="home"),
         DeclareLaunchArgument("grasp_objects", default_value=""),
+        DeclareLaunchArgument("scene_joints", default_value=""),
         Node(
             package="robot_state_publisher",
             executable="robot_state_publisher",

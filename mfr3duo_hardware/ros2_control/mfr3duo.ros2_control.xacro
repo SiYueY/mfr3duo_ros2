@@ -7,6 +7,7 @@
   <xacro:arg name="model_path" default=""/>
   <xacro:arg name="initial_keyframe" default="home"/>
   <xacro:arg name="grasp_objects" default=""/>
+  <xacro:arg name="scene_joints" default=""/>
   <xacro:mfr3duo connected_to="base"/>
 
   <ros2_control name="MFR3DuoMujoco" type="system">
@@ -17,6 +18,7 @@
       <param name="model_path">$(arg model_path)</param>
       <param name="initial_keyframe">$(arg initial_keyframe)</param>
       <param name="grasp_objects">$(arg grasp_objects)</param>
+      <param name="scene_joints">$(arg scene_joints)</param>
     </hardware>
     <xacro:mfr3duo_arm_joint name="left_fr3v2_1_joint1"/>
     <xacro:mfr3duo_arm_joint name="left_fr3v2_1_joint2"/>

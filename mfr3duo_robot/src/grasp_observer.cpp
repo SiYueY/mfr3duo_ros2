@@ -1,4 +1,5 @@
 #include "grasp_observer.hpp"
+#include "profile_path.hpp"
 
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <yaml-cpp/yaml.h>
@@ -75,8 +76,9 @@ struct SimulationGraspObserver::Impl {
     double timeout{.5}, age{.3};
     explicit Impl(rclcpp::Node::SharedPtr supplied)
     : node(std::move(supplied)), buffer(node->get_clock()), listener(buffer, node, false) {
-        const auto profile = YAML::LoadFile(
-            ament_index_cpp::get_package_share_directory("mfr3duo_robot") + "/config/grasp.yaml");
+        const auto profile = YAML::LoadFile(profile_path(
+            node, "grasp_profile_path",
+            ament_index_cpp::get_package_share_directory("mfr3duo_robot") + "/config/grasp.yaml"));
         const auto seconds = [&](const char* name, double fallback) {
             if (!node->has_parameter(name)) node->declare_parameter(name, fallback);
             const auto value = node->get_parameter(name).as_double();

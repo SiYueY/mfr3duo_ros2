@@ -21,6 +21,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(mfr3duo_msgs REQUIRED)
 
 # ROS 2 adapter library. It adapts RobotHardware to ros2_control and to ROS
 # sensor topics; it is the only target that may depend on ROS 2.
@@ -32,7 +33,7 @@ target_include_directories(mfr3duo_ros2_adapter PRIVATE ${CMAKE_CURRENT_SOURCE_D
 target_compile_options(mfr3duo_ros2_adapter PRIVATE -Wall -Wextra -Wpedantic)
 target_link_libraries(mfr3duo_ros2_adapter mfr3duo_hardware)
 ament_target_dependencies(mfr3duo_ros2_adapter
-  hardware_interface pluginlib rclcpp rclcpp_lifecycle sensor_msgs geometry_msgs)
+  hardware_interface pluginlib rclcpp rclcpp_lifecycle sensor_msgs geometry_msgs mfr3duo_msgs)
 
 pluginlib_export_plugin_description_file(hardware_interface mfr3duo_hardware.xml)
 

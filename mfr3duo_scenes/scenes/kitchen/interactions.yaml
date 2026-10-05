@@ -1,0 +1,14 @@
+# Bounded simulation fixture actuation, distinct from robot arm handle skills.
+joints:
+  - name: bottom_main_group_1_slidejoint
+    label: lower drawer
+    lower: -0.78
+    upper: 0.0
+    open_position: -0.2
+    closed_position: 0.0
+  - name: top_main_group_leftdoorhinge
+    label: upper cabinet left door
+    lower: -1.57
+    upper: 0.0
+    open_position: -0.6
+    closed_position: 0.0

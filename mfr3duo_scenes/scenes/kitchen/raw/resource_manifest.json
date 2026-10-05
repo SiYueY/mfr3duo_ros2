@@ -1,0 +1,1964 @@
+[
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/tiles/white_tiles.png",
+    "exported": "assets/textures/tiles/white_tiles.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/flat/light_gray.png",
+    "exported": "assets/textures/flat/light_gray.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/tiles/white_tiles.png",
+    "exported": "assets/textures/tiles/white_tiles.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/flat/light_gray.png",
+    "exported": "assets/textures/flat/light_gray.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/tiles/white_tiles.png",
+    "exported": "assets/textures/tiles/white_tiles.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/flat/light_gray.png",
+    "exported": "assets/textures/flat/light_gray.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/tiles/white_tiles.png",
+    "exported": "assets/textures/tiles/white_tiles.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/flat/light_gray.png",
+    "exported": "assets/textures/flat/light_gray.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/wood/light_wood_planks_long.png",
+    "exported": "assets/textures/wood/light_wood_planks_long.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/flat/light_gray.png",
+    "exported": "assets/textures/flat/light_gray.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/accessories/outlets/simple_white/visuals/material_0.png",
+    "exported": "assets/fixtures/accessories/outlets/simple_white/visuals/material_0.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/accessories/outlets/simple_white/visuals/image0.png",
+    "exported": "assets/fixtures/accessories/outlets/simple_white/visuals/image0.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/accessories/outlets/simple_white/visuals/outlet_0.obj",
+    "exported": "assets/fixtures/accessories/outlets/simple_white/visuals/outlet_0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/accessories/outlets/simple_white/visuals/material_0.png",
+    "exported": "assets/fixtures/accessories/outlets/simple_white/visuals/material_0.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/accessories/outlets/simple_white/visuals/image0.png",
+    "exported": "assets/fixtures/accessories/outlets/simple_white/visuals/image0.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/accessories/outlets/simple_white/visuals/outlet_0.obj",
+    "exported": "assets/fixtures/accessories/outlets/simple_white/visuals/outlet_0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/accessories/light_switches/white_wide_switch/visuals/material_0.png",
+    "exported": "assets/fixtures/accessories/light_switches/white_wide_switch/visuals/material_0.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/accessories/light_switches/white_wide_switch/visuals/image0.png",
+    "exported": "assets/fixtures/accessories/light_switches/white_wide_switch/visuals/image0.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/accessories/light_switches/white_wide_switch/visuals/light_switch_0.obj",
+    "exported": "assets/fixtures/accessories/light_switches/white_wide_switch/visuals/light_switch_0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/accessories/light_switches/white_wide_switch/visuals/material_0.png",
+    "exported": "assets/fixtures/accessories/light_switches/white_wide_switch/visuals/material_0.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/accessories/light_switches/white_wide_switch/visuals/image0.png",
+    "exported": "assets/fixtures/accessories/light_switches/white_wide_switch/visuals/image0.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/accessories/light_switches/white_wide_switch/visuals/light_switch_0.obj",
+    "exported": "assets/fixtures/accessories/light_switches/white_wide_switch/visuals/light_switch_0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/visual/UtensilRack009.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/visual/UtensilRack009.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/visual/T_BC001.png",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/visual/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_0.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_1.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_1.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_2.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_2.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_3.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_3.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_4.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_4.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_5.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_5.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_6.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_6.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_7.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_7.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_8.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_8.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_9.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_9.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_10.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_10.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_11.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_11.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_12.obj",
+    "exported": "assets/objects/lightwheel/utensil_rack/UtensilRack009/collision/collision_mesh_collision_12.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/visual/Stool009.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/visual/Stool009.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/visual/Prop.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/visual/Prop.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/visual/T_BC001.png",
+    "exported": "assets/objects/lightwheel/stool/Stool009/visual/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/visual/T_BC001.png",
+    "exported": "assets/objects/lightwheel/stool/Stool009/visual/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_0.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_1.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_1.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_2.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_2.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_3.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_3.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_4.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_4.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_5.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_5.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_6.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_6.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_7.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_7.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_8.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_8.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_9.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_9.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_10.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_10.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_11.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_11.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_12.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_12.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_13.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_13.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_14.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_14.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_15.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_15.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/visual/Stool009.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/visual/Stool009.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/visual/Prop.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/visual/Prop.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/visual/T_BC001.png",
+    "exported": "assets/objects/lightwheel/stool/Stool009/visual/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/visual/T_BC001.png",
+    "exported": "assets/objects/lightwheel/stool/Stool009/visual/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_0.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_1.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_1.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_2.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_2.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_3.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_3.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_4.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_4.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_5.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_5.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_6.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_6.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_7.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_7.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_8.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_8.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_9.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_9.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_10.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_10.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_11.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_11.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_12.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_12.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_13.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_13.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_14.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_14.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_15.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_15.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/visual/Stool009.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/visual/Stool009.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/visual/Prop.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/visual/Prop.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/visual/T_BC001.png",
+    "exported": "assets/objects/lightwheel/stool/Stool009/visual/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/visual/T_BC001.png",
+    "exported": "assets/objects/lightwheel/stool/Stool009/visual/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_0.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_1.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_1.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_2.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_2.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_3.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_3.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_4.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_4.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_5.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_5.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_6.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_6.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_7.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_7.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_8.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_8.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_9.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_9.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_10.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_10.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_11.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_11.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_12.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_12.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_13.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_13.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_14.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_14.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_15.obj",
+    "exported": "assets/objects/lightwheel/stool/Stool009/collision/collision_mesh_collision_15.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/stovetops/Stovetop004/visuals/knob_front_center.obj",
+    "exported": "assets/fixtures/stovetops/Stovetop004/visuals/knob_front_center.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/stovetops/Stovetop004/visuals/knob_front_left.obj",
+    "exported": "assets/fixtures/stovetops/Stovetop004/visuals/knob_front_left.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/stovetops/Stovetop004/visuals/knob_front_right.obj",
+    "exported": "assets/fixtures/stovetops/Stovetop004/visuals/knob_front_right.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/stovetops/Stovetop004/visuals/knob_rear_center.obj",
+    "exported": "assets/fixtures/stovetops/Stovetop004/visuals/knob_rear_center.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/stovetops/Stovetop004/visuals/knob_rear_right.obj",
+    "exported": "assets/fixtures/stovetops/Stovetop004/visuals/knob_rear_right.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/stovetops/Stovetop004/visuals/Body001.obj",
+    "exported": "assets/fixtures/stovetops/Stovetop004/visuals/Body001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/stovetops/Stovetop004/visuals/T_BC001.png",
+    "exported": "assets/fixtures/stovetops/Stovetop004/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/stovetops/Stovetop004/visuals/T_BC001.png",
+    "exported": "assets/fixtures/stovetops/Stovetop004/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/stovetops/Stovetop004/visuals/T_BC001.png",
+    "exported": "assets/fixtures/stovetops/Stovetop004/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/stovetops/Stovetop004/visuals/T_BC001.png",
+    "exported": "assets/fixtures/stovetops/Stovetop004/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/stovetops/Stovetop004/visuals/T_BC001.png",
+    "exported": "assets/fixtures/stovetops/Stovetop004/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/stovetops/Stovetop004/visuals/T_BC001.png",
+    "exported": "assets/fixtures/stovetops/Stovetop004/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/wood/light_wood_planks.png",
+    "exported": "assets/textures/wood/light_wood_planks.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/flat/white.png",
+    "exported": "assets/textures/flat/white.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/flat/white.png",
+    "exported": "assets/textures/flat/white.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/flat/white.png",
+    "exported": "assets/textures/flat/white.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/textures/metals/bright_metal.png",
+    "exported": "assets/textures/metals/bright_metal.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/door.obj",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/door.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/door_Clear.obj",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/door_Clear.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/knob_temp.obj",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/knob_temp.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/knob_time.obj",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/knob_time.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/Body001.obj",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/Body001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/rack0.obj",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/rack0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/rack1.obj",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/rack1.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/T_BC001.png",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/T_BC001.png",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/T_BC001.png",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/T_BC001.png",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/T_BC001.png",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/ovens/Oven037/visuals/T_BC001.png",
+    "exported": "assets/fixtures/ovens/Oven037/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/microwaves/Microwave035/visuals/door.obj",
+    "exported": "assets/fixtures/microwaves/Microwave035/visuals/door.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/microwaves/Microwave035/visuals/door_Clear.obj",
+    "exported": "assets/fixtures/microwaves/Microwave035/visuals/door_Clear.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/microwaves/Microwave035/visuals/Body001.obj",
+    "exported": "assets/fixtures/microwaves/Microwave035/visuals/Body001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/microwaves/Microwave035/visuals/Disc001.obj",
+    "exported": "assets/fixtures/microwaves/Microwave035/visuals/Disc001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/microwaves/Microwave035/visuals/T_BC001.png",
+    "exported": "assets/fixtures/microwaves/Microwave035/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/microwaves/Microwave035/visuals/T_BC001.png",
+    "exported": "assets/fixtures/microwaves/Microwave035/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/microwaves/Microwave035/visuals/T_BC001.png",
+    "exported": "assets/fixtures/microwaves/Microwave035/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/freezer_door.obj",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/freezer_door.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/freezer_drawer0.obj",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/freezer_drawer0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/freezer_drawer1.obj",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/freezer_drawer1.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/freezer_drawer2.obj",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/freezer_drawer2.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/fridge_door.obj",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/fridge_door.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/fridge_door_Clear.obj",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/fridge_door_Clear.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/fridge_drawer0.obj",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/fridge_drawer0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/fridge_drawer1.obj",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/fridge_drawer1.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/fridge_drawer2.obj",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/fridge_drawer2.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/Body001.obj",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/Body001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/Body001_Clear.obj",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/Body001_Clear.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/T_BC001.png",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/T_BC001.png",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/T_BC001.png",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/T_BC001.png",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/T_BC001.png",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/fridges/Refrigerator072/visuals/T_BC001.png",
+    "exported": "assets/fixtures/fridges/Refrigerator072/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/hoods/RangeHood024/visuals/Body001.obj",
+    "exported": "assets/fixtures/hoods/RangeHood024/visuals/Body001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/hoods/RangeHood024/visuals/Button001.obj",
+    "exported": "assets/fixtures/hoods/RangeHood024/visuals/Button001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/hoods/RangeHood024/visuals/Button002.obj",
+    "exported": "assets/fixtures/hoods/RangeHood024/visuals/Button002.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/hoods/RangeHood024/visuals/T_BC001.png",
+    "exported": "assets/fixtures/hoods/RangeHood024/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/hoods/RangeHood024/visuals/T_BC001.png",
+    "exported": "assets/fixtures/hoods/RangeHood024/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/hoods/RangeHood024/visuals/T_BC001.png",
+    "exported": "assets/fixtures/hoods/RangeHood024/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/sideL_button_cancel.obj",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/sideL_button_cancel.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/sideL_knob_doneness.obj",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/sideL_knob_doneness.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/sideL_lever.obj",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/sideL_lever.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/sideR_button_cancel.obj",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/sideR_button_cancel.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/sideR_knob_doneness.obj",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/sideR_knob_doneness.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/sideR_lever.obj",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/sideR_lever.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/Body001.obj",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/Body001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/Body002.obj",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/Body002.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "exported": "assets/fixtures/toasters/Toaster015/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/visual/KnifeBlock008.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/visual/KnifeBlock008.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/visual/Prop.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/visual/Prop.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/visual/T_BC001.png",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/visual/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/visual/T_BC001.png",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/visual/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_0.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_1.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_1.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_2.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_2.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_3.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_3.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_4.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_4.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_5.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_5.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_6.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_6.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_7.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_7.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_8.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_8.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_9.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_9.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_10.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_10.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_11.obj",
+    "exported": "assets/objects/lightwheel/knife_block/KnifeBlock008/collision/collision_mesh_collision_11.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/visual/PaperTowelHolder001.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/visual/PaperTowelHolder001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/visual/prop.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/visual/prop.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/visual/T_BC001.png",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/visual/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/visual/T_BC001.png",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/visual/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_0.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_1.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_1.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_2.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_2.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_3.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_3.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_4.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_4.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_5.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_5.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_6.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_6.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_7.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_7.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_8.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_8.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_9.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_9.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_10.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_10.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_11.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_11.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_12.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_12.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_13.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_13.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_14.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_14.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_15.obj",
+    "exported": "assets/objects/lightwheel/paper_towel_holder/PaperTowelHolder001/collision/collision_mesh_collision_15.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Body001.obj",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Body001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Button001.obj",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Button001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Container001_Clear.obj",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Container001_Clear.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Lever001.obj",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Lever001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Lever002.obj",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Lever002.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Lid001.obj",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Lid001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Lid002.obj",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/Lid002.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "exported": "assets/fixtures/coffee_machines/CoffeeMachine045/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/sinks/Sink009/visuals/handle.obj",
+    "exported": "assets/fixtures/sinks/Sink009/visuals/handle.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/sinks/Sink009/visuals/Body001.obj",
+    "exported": "assets/fixtures/sinks/Sink009/visuals/Body001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/sinks/Sink009/visuals/Shelf001.obj",
+    "exported": "assets/fixtures/sinks/Sink009/visuals/Shelf001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/sinks/Sink009/visuals/spout.obj",
+    "exported": "assets/fixtures/sinks/Sink009/visuals/spout.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/sinks/Sink009/visuals/T_BC001.png",
+    "exported": "assets/fixtures/sinks/Sink009/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/sinks/Sink009/visuals/T_BC001.png",
+    "exported": "assets/fixtures/sinks/Sink009/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/sinks/Sink009/visuals/T_BC001.png",
+    "exported": "assets/fixtures/sinks/Sink009/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/sinks/Sink009/visuals/T_BC001.png",
+    "exported": "assets/fixtures/sinks/Sink009/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/../../textures/ceramic.png",
+    "exported": "assets/textures/ceramic.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/dishwashers/Dishwasher031/visuals/button_lock.obj",
+    "exported": "assets/fixtures/dishwashers/Dishwasher031/visuals/button_lock.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/dishwashers/Dishwasher031/visuals/button_power.obj",
+    "exported": "assets/fixtures/dishwashers/Dishwasher031/visuals/button_power.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/dishwashers/Dishwasher031/visuals/Body001.obj",
+    "exported": "assets/fixtures/dishwashers/Dishwasher031/visuals/Body001.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/dishwashers/Dishwasher031/visuals/door.obj",
+    "exported": "assets/fixtures/dishwashers/Dishwasher031/visuals/door.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/dishwashers/Dishwasher031/visuals/rack0.obj",
+    "exported": "assets/fixtures/dishwashers/Dishwasher031/visuals/rack0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/dishwashers/Dishwasher031/visuals/rack1.obj",
+    "exported": "assets/fixtures/dishwashers/Dishwasher031/visuals/rack1.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/dishwashers/Dishwasher031/visuals/T_BC001.png",
+    "exported": "assets/fixtures/dishwashers/Dishwasher031/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/dishwashers/Dishwasher031/visuals/T_BC001.png",
+    "exported": "assets/fixtures/dishwashers/Dishwasher031/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/dishwashers/Dishwasher031/visuals/T_BC001.png",
+    "exported": "assets/fixtures/dishwashers/Dishwasher031/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/dishwashers/Dishwasher031/visuals/T_BC001.png",
+    "exported": "assets/fixtures/dishwashers/Dishwasher031/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/dishwashers/Dishwasher031/visuals/T_BC001.png",
+    "exported": "assets/fixtures/dishwashers/Dishwasher031/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/dishwashers/Dishwasher031/visuals/T_BC001.png",
+    "exported": "assets/fixtures/dishwashers/Dishwasher031/visuals/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "exported": "assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/visuals/CabinetDoorPanel003.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "exported": "assets/fixtures/handles/CabinetHandle014/visuals/CabinetHandle014.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/visual/Plant006.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/visual/Plant006.obj",
+    "status": "copied"
+  },
+  {
+    "element": "texture",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/visual/T_BC001.png",
+    "exported": "assets/objects/lightwheel/plant/Plant006/visual/T_BC001.png",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_0.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_0.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_1.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_1.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_2.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_2.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_3.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_3.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_4.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_4.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_5.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_5.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_6.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_6.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_7.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_7.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_8.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_8.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_9.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_9.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_10.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_10.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_11.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_11.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_12.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_12.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_13.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_13.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_14.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_14.obj",
+    "status": "copied"
+  },
+  {
+    "element": "mesh",
+    "source": "/home/siyuey/workspace/mujoco/robocasa/robocasa/robocasa/models/assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_15.obj",
+    "exported": "assets/objects/lightwheel/plant/Plant006/collision/collision_mesh_collision_15.obj",
+    "status": "copied"
+  }
+]

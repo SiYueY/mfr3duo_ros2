@@ -25,8 +25,11 @@ ament_export_targets(export_mfr3duo_nav HAS_LIBRARY_TARGET)
 ament_export_dependencies(rclcpp rclcpp_action geometry_msgs nav_msgs nav2_msgs
   lifecycle_msgs tf2_ros tf2_msgs)
 install(DIRECTORY config maps launch DESTINATION share/${PROJECT_NAME})
+install(PROGRAMS tools/simulation_localization.py DESTINATION lib/${PROJECT_NAME})
 if(BUILD_TESTING)
   find_package(Python3 COMPONENTS Interpreter REQUIRED)
+  add_test(NAME simulation_localization_test COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/simulation_localization_test.py)
   add_test(NAME navigator_config_contract COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/test/config_contract_test.py)
   add_test(NAME navigator_installed_consumer COMMAND ${Python3_EXECUTABLE}

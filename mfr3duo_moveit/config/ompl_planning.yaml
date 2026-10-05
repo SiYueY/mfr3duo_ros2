@@ -3,6 +3,9 @@ request_adapters: default_planner_request_adapters/AddTimeOptimalParameterizatio
   default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds
   default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints
 start_state_max_bounds_error: 0.01
+# Keep short corrections below the facade's 0.0001 joint goal tolerance.
+min_angle_change: 0.000001
+path_tolerance: 0.001
 planner_configs:
   RRTConnectkConfigDefault:
     type: geometric::RRTConnect

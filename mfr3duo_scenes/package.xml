@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>mfr3duo_scenes</name>
+  <version>0.1.0</version>
+  <description>Portable environments and matched navigation/manipulation profiles.</description>
+  <maintainer email="maintainers@example.com">mfr3duo maintainers</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_python</buildtool_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>mfr3duo_description</exec_depend>
+  <export><build_type>ament_python</build_type></export>
+</package>

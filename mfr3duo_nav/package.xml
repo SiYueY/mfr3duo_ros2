@@ -18,6 +18,8 @@
   <depend>tf2_msgs</depend>
   <exec_depend>mfr3duo_control</exec_depend>
   <exec_depend>launch_ros</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
   <test_depend>mfr3duo_moveit</test_depend>
   <export>
     <build_type>ament_cmake</build_type>

@@ -1,0 +1,7 @@
+# Simulation fixture actuator, not a robot arm grasp or hardware command.
+string joint_name
+float64 position
+bool hold
+---
+bool success
+string message

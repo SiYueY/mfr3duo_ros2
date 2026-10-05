@@ -3,11 +3,12 @@ from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription, TimerAction
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import SetRemap
+from launch.substitutions import PythonExpression
+from launch_ros.actions import SetRemap, Node
 
 
 def generate_launch_description():
@@ -24,6 +25,7 @@ def generate_launch_description():
         DeclareLaunchArgument('model_path', default_value=str(description / 'mjcf/navigation.xml')),
         DeclareLaunchArgument('map', default_value=str(share / 'maps/navigation.yaml')),
         DeclareLaunchArgument('params_file', default_value=str(share / 'config/nav2.yaml')),
+        DeclareLaunchArgument('localization', default_value='amcl', choices=['amcl', 'simulation_ground_truth']),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(str(control / 'launch/control.launch.py')),
             condition=IfCondition(LaunchConfiguration('start_control')),
@@ -35,7 +37,20 @@ def generate_launch_description():
             SetRemap(src='cmd_vel_smoothed', dst='/tmr_controller/cmd_vel'),
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(str(nav2 / 'launch/localization_launch.py')),
+                condition=IfCondition(PythonExpression(["'", LaunchConfiguration('localization'), "' == 'amcl'"])),
                 launch_arguments={**parameters, 'map': LaunchConfiguration('map')}.items()),
+            Node(package='nav2_map_server', executable='map_server', name='map_server', output='screen',
+                 condition=IfCondition(PythonExpression(["'", LaunchConfiguration('localization'), "' == 'simulation_ground_truth'"])),
+                 parameters=[{'use_sim_time': False, 'yaml_filename': LaunchConfiguration('map')}]),
+            Node(package='mfr3duo_nav', executable='simulation_localization.py', output='screen',
+                 condition=IfCondition(PythonExpression(["'", LaunchConfiguration('localization'), "' == 'simulation_ground_truth'"])),
+                 parameters=[{'use_sim_time': False}]),
+            TimerAction(period=2.0, actions=[
+                Node(package='nav2_lifecycle_manager', executable='lifecycle_manager', name='lifecycle_manager_localization',
+                     condition=IfCondition(PythonExpression(["'", LaunchConfiguration('localization'), "' == 'simulation_ground_truth'"])),
+                     parameters=[{'use_sim_time': False, 'autostart': True, 'bond_timeout': 0.0,
+                                  'node_names': ['map_server', 'simulation_localization']}]),
+            ]),
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(str(nav2 / 'launch/navigation_launch.py')),
                 launch_arguments=parameters.items()),

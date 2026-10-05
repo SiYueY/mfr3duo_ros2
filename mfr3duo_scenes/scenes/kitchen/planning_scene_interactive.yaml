@@ -1,0 +1,652 @@
+frame: simulation_world
+boxes:
+- id: kitchen/wall_room_main
+  position:
+  - 2.15
+  - 0.020000000000000004
+  - 1.5
+  dimensions:
+  - 6.380000000000002
+  - 0.04000000000000001
+  - 3.000000000000001
+- id: kitchen/wall_backing_room_main
+  position:
+  - 2.15
+  - 0.14
+  - 1.38
+  dimensions:
+  - 6.780000000000002
+  - 0.20000000000000007
+  - 3.240000000000001
+- id: kitchen/wall_left_room_main
+  position:
+  - -1.02
+  - -2.5
+  - 1.5
+  dimensions:
+  - 0.040000000000000036
+  - 5.08
+  - 3.0
+- id: kitchen/wall_left_backing_room_main
+  position:
+  - -1.1400000000000001
+  - -2.5
+  - 1.38
+  dimensions:
+  - 0.20000000000000018
+  - 5.08
+  - 3.24
+- id: kitchen/wall_right_room_main
+  position:
+  - 5.319999999999999
+  - -2.5
+  - 1.5
+  dimensions:
+  - 0.03999999999999915
+  - 5.08
+  - 3.0
+- id: kitchen/wall_right_backing_room_main
+  position:
+  - 5.4399999999999995
+  - -2.5
+  - 1.38
+  dimensions:
+  - 0.1999999999999993
+  - 5.08
+  - 3.24
+- id: kitchen/wall_front_room_main
+  position:
+  - 2.15
+  - -5.02
+  - 1.5
+  dimensions:
+  - 6.380000000000002
+  - 0.03999999999999915
+  - 3.000000000000001
+- id: kitchen/wall_front_backing_room_main
+  position:
+  - 2.15
+  - -5.14
+  - 1.38
+  dimensions:
+  - 6.780000000000002
+  - 0.1999999999999993
+  - 3.240000000000001
+- id: kitchen/floor_room_main
+  position:
+  - 2.15
+  - -2.5
+  - -0.022000000000000002
+  dimensions:
+  - 6.380000000000002
+  - 5.080000000000002
+  - 0.03600000000000001
+- id: kitchen/floor_backing_room_main
+  position:
+  - 2.15
+  - -2.5
+  - -0.14200000000000002
+  dimensions:
+  - 6.380000000000002
+  - 5.080000000000002
+  - 0.19600000000000006
+- id: kitchen/utensil_rack_room_main
+  position:
+  - 2.7500078460920463
+  - -0.040983600427191125
+  - 1.2980144029315879
+  dimensions:
+  - 0.3441022335562547
+  - 0.071059548212599
+  - 0.32781767355985236
+- id: kitchen/stool_1_room_main
+  position:
+  - 2.083560427674027
+  - -3.224198467776197
+  - 0.40507270989419797
+  dimensions:
+  - 0.670455101005099
+  - 0.6612545207092424
+  - 0.8160672477547197
+- id: kitchen/stool_2_room_main
+  position:
+  - 2.733560427674027
+  - -3.224198467776197
+  - 0.40507270989419797
+  dimensions:
+  - 0.670455101005099
+  - 0.6612545207092424
+  - 0.8160672477547197
+- id: kitchen/stool_3_room_main
+  position:
+  - 3.383560427674027
+  - -3.224198467776197
+  - 0.40507270989419797
+  dimensions:
+  - 0.670455101005099
+  - 0.6612545207092424
+  - 0.8160672477547197
+- id: kitchen/stovetop_main_group_main
+  position:
+  - 2.750999963397014
+  - -0.2949999686260122
+  - 0.9261974060924649
+  dimensions:
+  - 0.9609866954368806
+  - 0.5479084044527214
+  - 0.03534169754838157
+- id: kitchen/bottom_main_group_base_main
+  position:
+  - 0.85
+  - -0.355
+  - 0.024999999999999988
+  dimensions:
+  - 0.8
+  - 0.71
+  - 0.05
+- id: kitchen/bottom_main_group_1_main
+  position:
+  - 0.85
+  - -0.375
+  - 0.175
+  dimensions:
+  - 0.8
+  - 0.75
+  - 0.25
+- id: kitchen/bottom_main_group_2_main
+  position:
+  - 0.85
+  - -0.40956861971882463
+  - 0.42500000000000004
+  dimensions:
+  - 0.8
+  - 0.8191372394376493
+  - 0.25000000000000006
+- id: kitchen/oven_main_group_main
+  position:
+  - 0.8500000191738921
+  - -0.5093695821227566
+  - 0.9000002389651118
+  dimensions:
+  - 0.7474510288727941
+  - 0.6358914764461232
+  - 0.6776888261383935
+- id: kitchen/oven_housing_main_group_main
+  position:
+  - 0.85
+  - -0.39
+  - 0.9
+  dimensions:
+  - 0.8
+  - 0.78
+  - 0.7
+- id: kitchen/microwave_main_group_main
+  position:
+  - 0.8500553892076086
+  - -0.5568230538308196
+  - 1.5244119295518863
+  dimensions:
+  - 0.7422699855494619
+  - 0.5274403081577893
+  - 0.39255397262333
+- id: kitchen/micro_housing_main_group_main
+  position:
+  - 0.85
+  - -0.39
+  - 1.525
+  dimensions:
+  - 0.8
+  - 0.78
+  - 0.5500000000000003
+- id: kitchen/top_main_group_main
+  position:
+  - 0.85
+  - -0.40956861971882463
+  - 2.1999999999999997
+  dimensions:
+  - 0.8
+  - 0.8191372394376493
+  - 0.7999999999999996
+- id: kitchen/fridge_main_group_main
+  position:
+  - 0.004977663405400318
+  - -0.4692509563540901
+  - 0.8749998960985248
+  dimensions:
+  - 0.8481094102606426
+  - 0.8964697225732836
+  - 1.7481040497898088
+- id: kitchen/fridge_housing_main_group_main
+  position:
+  - 0.004999999999999893
+  - -0.39
+  - 0.8999999999999998
+  dimensions:
+  - 0.8900000000000001
+  - 0.78
+  - 1.8
+- id: kitchen/fridge_top_main_group_main
+  position:
+  - 0.004999999999999893
+  - -0.40956861971882463
+  - 2.2
+  dimensions:
+  - 0.8900000000000001
+  - 0.8191372394376493
+  - 0.8000000000000003
+- id: kitchen/cab_main_main_group_main
+  position:
+  - 1.75
+  - -0.21956861971882463
+  - 1.85
+  dimensions:
+  - 1.0
+  - 0.43913723943764926
+  - 0.9199999999999999
+- id: kitchen/hood_main_group_main
+  position:
+  - 2.751331626972412
+  - -0.3205245430008643
+  - 2.1309685620248002
+  dimensions:
+  - 0.96241505219768
+  - 0.5989497363049434
+  - 0.9213912348141773
+- id: kitchen/shelves_main_group_main
+  position:
+  - 3.65
+  - -0.2
+  - 1.6275
+  dimensions:
+  - 0.7999999999999998
+  - 0.4
+  - 0.47499999999999987
+- id: kitchen/cab_2_main_group_main
+  position:
+  - 4.55
+  - -0.21956861971882463
+  - 1.85
+  dimensions:
+  - 1.0
+  - 0.43913723943764926
+  - 0.9199999999999999
+- id: kitchen/stack_3_main_group_base_main
+  position:
+  - 1.75
+  - -0.265
+  - 0.024999999999999988
+  dimensions:
+  - 1.0
+  - 0.53
+  - 0.05
+- id: kitchen/stack_3_main_group_1_main
+  position:
+  - 1.75
+  - -0.3195686197188246
+  - 0.36500000000000005
+  dimensions:
+  - 1.0
+  - 0.6391372394376492
+  - 0.63
+- id: kitchen/stack_3_main_group_2_main
+  position:
+  - 1.5
+  - -0.3195686197188246
+  - 0.7849999999999999
+  dimensions:
+  - 0.5
+  - 0.6391372394376492
+  - 0.20999999999999996
+- id: kitchen/stack_3_main_group_3_main
+  position:
+  - 2.0
+  - -0.3195686197188246
+  - 0.7849999999999999
+  dimensions:
+  - 0.5
+  - 0.6391372394376492
+  - 0.20999999999999996
+- id: kitchen/stack_4_main_group_base_main
+  position:
+  - 2.75
+  - -0.265
+  - 0.024999999999999988
+  dimensions:
+  - 1.0
+  - 0.53
+  - 0.05
+- id: kitchen/stack_4_main_group_1_main
+  position:
+  - 2.75
+  - -0.3195686197188246
+  - 0.36500000000000005
+  dimensions:
+  - 1.0
+  - 0.6391372394376492
+  - 0.63
+- id: kitchen/stack_4_main_group_2_main
+  position:
+  - 2.5
+  - -0.3195686197188246
+  - 0.7849999999999999
+  dimensions:
+  - 0.5
+  - 0.6391372394376492
+  - 0.20999999999999996
+- id: kitchen/stack_4_main_group_3_main
+  position:
+  - 3.0
+  - -0.3195686197188246
+  - 0.7849999999999999
+  dimensions:
+  - 0.5
+  - 0.6391372394376492
+  - 0.20999999999999996
+- id: kitchen/stack_5_main_group_base_main
+  position:
+  - 3.75
+  - -0.265
+  - 0.024999999999999988
+  dimensions:
+  - 1.0
+  - 0.53
+  - 0.05
+- id: kitchen/stack_5_main_group_1_main
+  position:
+  - 3.75
+  - -0.3195686197188246
+  - 0.36500000000000005
+  dimensions:
+  - 1.0
+  - 0.6391372394376492
+  - 0.63
+- id: kitchen/stack_5_main_group_2_main
+  position:
+  - 3.5
+  - -0.3195686197188246
+  - 0.7849999999999999
+  dimensions:
+  - 0.5
+  - 0.6391372394376492
+  - 0.20999999999999996
+- id: kitchen/stack_5_main_group_3_main
+  position:
+  - 4.0
+  - -0.3195686197188246
+  - 0.7849999999999999
+  dimensions:
+  - 0.5
+  - 0.6391372394376492
+  - 0.20999999999999996
+- id: kitchen/stack_6_main_group_base_main
+  position:
+  - 4.65
+  - -0.265
+  - 0.024999999999999988
+  dimensions:
+  - 0.8000000000000007
+  - 0.53
+  - 0.05
+- id: kitchen/stack_6_main_group_1_main
+  position:
+  - 4.65
+  - -0.3195686197188246
+  - 0.15499999999999997
+  dimensions:
+  - 0.8000000000000007
+  - 0.6391372394376492
+  - 0.20999999999999996
+- id: kitchen/stack_6_main_group_2_main
+  position:
+  - 4.65
+  - -0.3195686197188246
+  - 0.365
+  dimensions:
+  - 0.8000000000000007
+  - 0.6391372394376492
+  - 0.20999999999999996
+- id: kitchen/stack_6_main_group_3_main
+  position:
+  - 4.65
+  - -0.3195686197188246
+  - 0.575
+  dimensions:
+  - 0.8000000000000007
+  - 0.6391372394376492
+  - 0.20999999999999996
+- id: kitchen/stack_6_main_group_4_main
+  position:
+  - 4.65
+  - -0.3195686197188246
+  - 0.7849999999999999
+  dimensions:
+  - 0.8000000000000007
+  - 0.6391372394376492
+  - 0.20999999999999996
+- id: kitchen/toaster_main_group_main
+  position:
+  - 3.6497577116019224
+  - -0.32401279255043947
+  - 1.0248932711205982
+  dimensions:
+  - 0.3014002860878744
+  - 0.2743817589106866
+  - 0.20958654223494255
+- id: kitchen/knife_block_main_group_main
+  position:
+  - 4.099183388204547
+  - -0.3338988471164295
+  - 1.138924356358098
+  dimensions:
+  - 0.14130376523861443
+  - 0.3679850509676914
+  - 0.43764871272613504
+- id: kitchen/paper_towel_main_group_main
+  position:
+  - 1.400420108504912
+  - -0.32174297000552227
+  - 1.0965733446272024
+  dimensions:
+  - 0.24269067186620408
+  - 0.23997316097369148
+  - 0.3529466892613873
+- id: kitchen/coffee_machine_main_group_main
+  position:
+  - 4.650406901178668
+  - -0.3201442913014241
+  - 1.0971722864525622
+  dimensions:
+  - 0.179310458036829
+  - 0.41505184509838094
+  - 0.35414457291428425
+- id: kitchen/sink_island_group_main
+  position:
+  - 2.749942565533864
+  - -2.269999974787768
+  - 0.9692681450995599
+  dimensions:
+  - 0.681442131249363
+  - 0.46786184223544547
+  - 0.5433531630324354
+- id: kitchen/island_island_group_main
+  position:
+  - 2.7499073464103394
+  - -2.649999995707656
+  - 0.905
+  dimensions:
+  - 2.750129703221579
+  - 1.4002547913622851
+  - 0.030000000000000027
+- id: kitchen/island_stack_1_island_group_base_main
+  position:
+  - 2.7499383853628756
+  - -2.3149999971455912
+  - 0.024999999999999988
+  dimensions:
+  - 1.000049102110176
+  - 0.5300926513147184
+  - 0.05
+- id: kitchen/island_stack_1_island_group_1_main
+  position:
+  - 2.749940238434669
+  - -2.2604520421661056
+  - 0.36425
+  dimensions:
+  - 1.0000528082537627
+  - 0.6391885612736896
+  - 0.6285
+- id: kitchen/island_stack_1_island_group_2_main
+  position:
+  - 2.749968034511567
+  - -1.9949999985191413
+  - 0.7849999999999999
+  dimensions:
+  - 0.9970027753282231
+  - 0.030092375500121005
+  - 0.20700000000000007
+- id: kitchen/dishwasher_island_group_main
+  position:
+  - 1.924939644124954
+  - -2.2548374862668483
+  - 0.44499998820477144
+  dimensions:
+  - 0.648040326784123
+  - 0.6483542780688722
+  - 0.8881415252536377
+- id: kitchen/island_panel_cab_right_island_group_base_main
+  position:
+  - 1.4999041089001313
+  - -2.684884178570348
+  - 0.024999999999999988
+  dimensions:
+  - 0.20011859573629653
+  - 1.2800185252237322
+  - 0.05
+- id: kitchen/island_panel_cab_right_island_group_1_main
+  position:
+  - 1.4999059619719244
+  - -2.649883479592659
+  - 0.47
+  dimensions:
+  - 0.20012230187988322
+  - 1.3500199231791115
+  - 0.8399999999999999
+- id: kitchen/island_cab_left_island_group_base_main
+  position:
+  - 3.574938381821692
+  - -2.315076436357061
+  - 0.024999999999999988
+  dimensions:
+  - 0.6500491036124965
+  - 0.5300602225583368
+  - 0.05
+- id: kitchen/island_cab_left_island_group_1_main
+  position:
+  - 3.5749402348934853
+  - -2.2605199571443024
+  - 0.15499999999999997
+  dimensions:
+  - 0.6500528097560831
+  - 0.6391731809838541
+  - 0.20999999999999996
+- id: kitchen/island_cab_left_island_group_2_main
+  position:
+  - 3.5749402348934853
+  - -2.2605199571443024
+  - 0.365
+  dimensions:
+  - 0.6500528097560831
+  - 0.6391731809838541
+  - 0.20999999999999996
+- id: kitchen/island_cab_left_island_group_3_main
+  position:
+  - 3.5749402348934853
+  - -2.2605199571443024
+  - 0.575
+  dimensions:
+  - 0.6500528097560831
+  - 0.6391731809838541
+  - 0.20999999999999996
+- id: kitchen/island_cab_left_island_group_4_main
+  position:
+  - 3.5749402348934853
+  - -2.2605199571443024
+  - 0.7849999999999999
+  dimensions:
+  - 0.6500528097560831
+  - 0.6391731809838541
+  - 0.20999999999999996
+- id: kitchen/island_panel_cab_left_island_group_base_main
+  position:
+  - 3.9999040981692717
+  - -2.6851158125445
+  - 0.024999999999999988
+  dimensions:
+  - 0.20011859573629698
+  - 1.2800185252237322
+  - 0.05
+- id: kitchen/island_panel_cab_left_island_group_1_main
+  position:
+  - 3.9999059512410646
+  - -2.6501151135668097
+  - 0.47
+  dimensions:
+  - 0.20012230187988322
+  - 1.3500199231791115
+  - 0.8399999999999999
+- id: kitchen/island_base_box_island_group_main
+  position:
+  - 2.7498888156924073
+  - -2.8499999948491874
+  - 0.445
+  dimensions:
+  - 2.3500092552719583
+  - 0.10021773550646795
+  - 0.89
+- id: kitchen/plant_island_group_main
+  position:
+  - 3.794946513633025
+  - -2.6489247424159648
+  - 1.0602548424843536
+  dimensions:
+  - 0.21021595319490594
+  - 0.18891564984712605
+  - 0.28030968497321185
+- id: kitchen/joint/bottom_main_group_1_slidejoint
+  position:
+  - 0.85
+  - -0.42456861971882465
+  - 0.175
+  dimensions:
+  - 0.7969999999999999
+  - 0.7891372394376492
+  - 0.247
+  joint: bottom_main_group_1_slidejoint
+  joint_type: slide
+  axis:
+  - 0.0
+  - 1.0
+  - 0.0
+  pivot:
+  - 0.85
+  - -0.78
+  - 0.175
+- id: kitchen/joint/top_main_group_leftdoorhinge
+  position:
+  - 0.6499999999999999
+  - -0.7845686197188246
+  - 2.1999999999999997
+  dimensions:
+  - 0.397
+  - 0.06913723943764927
+  - 0.7969999999999997
+  joint: top_main_group_leftdoorhinge
+  joint_type: hinge
+  axis:
+  - 0.0
+  - 0.0
+  - 1.0
+  pivot:
+  - 0.46499999999999997
+  - -0.78
+  - 2.1999999999999997

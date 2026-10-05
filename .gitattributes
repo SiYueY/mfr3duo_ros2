@@ -1,0 +1,3 @@
+# Preserve RoboCasa source assets byte-for-byte; they are not source code.
+mfr3duo_scenes/scenes/kitchen/raw/assets/**/*.obj -whitespace
+mfr3duo_scenes/scenes/kitchen/raw/ROBOCASA_LICENSE -whitespace

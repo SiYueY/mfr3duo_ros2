@@ -27,6 +27,8 @@ struct RobotHardwareOptions {
     std::string model_path;
     std::string initial_keyframe{"home"};
     std::vector<SimulationObjectMapping> grasp_objects;
+    bool cameras_on_demand{false};
+    std::vector<SceneJointMapping> scene_joints;
 };
 
 /**
@@ -98,6 +100,10 @@ public:
 
     /** @brief Read one camera stream. */
     bool read_state(Camera id, CameraFrame& frame) const;
+    /** @brief Enable camera acquisition on subscriber demand, outside the control loop. */
+    bool set_camera_enabled(Camera id, bool enabled);
+    bool read_scene_joint(const std::string& name, JointState& state) const;
+    bool command_scene_joint(const std::string& name, double position);
 
 private:
     struct Impl;

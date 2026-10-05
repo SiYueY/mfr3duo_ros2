@@ -12,11 +12,11 @@ description = Path(get_package_share_directory('mfr3duo_description'))
 module_spec = importlib.util.spec_from_file_location('robot_launch', root / 'launch/robot.launch.py')
 module = importlib.util.module_from_spec(module_spec)
 module_spec.loader.exec_module(module)
-actions = module.generate_launch_description().entities
+context = LaunchContext()
+context.launch_configurations.update(scene='tasks', viewer_enabled='false', controller_update_rate='500', run_demo='false')
+actions = module.setup(context)
 includes = [item for item in actions if isinstance(item, IncludeLaunchDescription)]
 assert len(includes) == 3
-context = LaunchContext()
-context.launch_configurations.update(viewer_enabled='false', controller_update_rate='500', run_demo='false')
 arguments = [dict(item.launch_arguments) for item in includes]
 assert arguments[0]['initial_keyframe'] == 'task_home'
 assert arguments[1]['start_control'] == arguments[2]['start_control'] == 'false'

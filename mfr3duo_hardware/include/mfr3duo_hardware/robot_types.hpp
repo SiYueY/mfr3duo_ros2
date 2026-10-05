@@ -20,6 +20,11 @@ struct SimulationObjectMapping {
     std::string body_name;
     std::string collision_geom;
 };
+struct SceneJointMapping {
+    std::string joint_name;
+    double lower{0.0};
+    double upper{0.0};
+};
 enum class GraspManipulator : std::uint8_t { Left, Right };
 struct GraspObservation {
     bool valid{false};

@@ -1,0 +1,11 @@
+string authority_id
+mfr3duo_msgs/TaskStep[] steps
+float64 timeout_s
+---
+bool success
+string error_code
+string message
+bool termination_confirmed
+---
+string phase
+uint8 task_state

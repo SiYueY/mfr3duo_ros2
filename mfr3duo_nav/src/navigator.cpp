@@ -145,7 +145,7 @@ struct Navigator::Impl {
     mutable std::mutex mutex;
     bool initialized{false};
     std::shared_ptr<Operation> operation;
-    std::string map_frame, base_frame;
+    std::string map_frame, base_frame, localization_node;
     double response_timeout, navigation_timeout, terminal_timeout, freshness;
 
     explicit Impl(rclcpp::Node::SharedPtr supplied) : node(std::move(supplied)) {
@@ -154,6 +154,7 @@ struct Navigator::Impl {
             if (!node->has_parameter(name)) node->declare_parameter(name, fallback);
             return node->get_parameter(name).as_string();
         };
+        localization_node = text("navigator.localization_node", "amcl");
         auto seconds = [&](const char* name, double fallback) {
             if (!node->has_parameter(name)) node->declare_parameter(name, fallback);
             const double value = node->get_parameter(name).as_double();
@@ -237,8 +238,8 @@ struct Navigator::Impl {
             options);
         for (std::size_t i = 0; i < lifecycle.size(); ++i)
             lifecycle[i] = node->create_client<GetState>(
-                std::string(kLifecycle[i]) + "/get_state", rmw_qos_profile_services_default,
-                callbacks);
+                (i == 1 ? localization_node : std::string(kLifecycle[i])) + "/get_state",
+                rmw_qos_profile_services_default, callbacks);
         readiness_timer = node->create_wall_timer(
             std::chrono::milliseconds(200),
             [weak, clients = lifecycle] {
@@ -466,6 +467,8 @@ bool Navigator::is_ready() const {
     return impl_->initialized && impl_->ready();
 }
 Result Navigator::set_initial_pose(const geometry_msgs::msg::PoseWithCovarianceStamped& pose) {
+    if (impl_->localization_node != "amcl")
+        return {ErrorCode::InvalidGoal, "initial pose override requires AMCL localization"};
     geometry_msgs::msg::PoseStamped plain;
     plain.header = pose.header;
     plain.pose = pose.pose.pose;
@@ -539,7 +542,9 @@ Result Navigator::cancel() {
     if (!op) return {};
     request_cancel(op, 1);
     const auto result = await(op);
-    return result.code == ErrorCode::Canceled ? Result{} : result;
+    // Cancellation reports ownership termination, independently of task outcome.
+    std::lock_guard<std::mutex> lock(op->mutex);
+    return op->terminal ? Result{} : result;
 }
 NavigationState Navigator::state() const {
     std::shared_ptr<Operation> op;

@@ -45,6 +45,9 @@ AMENT_IGNORE
 *.o
 *.obj
 
+# Kitchen Wavefront meshes are authored scene assets, not compiler objects.
+!mfr3duo_scenes/scenes/kitchen/**/*.obj
+
 # Precompiled Headers
 *.gch
 *.pch

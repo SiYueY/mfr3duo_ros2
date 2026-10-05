@@ -151,7 +151,9 @@ typename rclcpp_action::Server<A>::SharedPtr Mfr3DuoGripperController::create_ac
                     if (!r->success)
                         r->error = terminal == 3
                                        ? "canceled"
-                                       : "target not achieved, timeout or device inactive";
+                                       : "target not achieved, timeout or device inactive; measured_width=" +
+                                             std::to_string(2 * state.position.load()) +
+                                             "; requested_width=" + std::to_string(state.width);
                 }
                 if (terminal == 3)
                     goal->canceled(r);

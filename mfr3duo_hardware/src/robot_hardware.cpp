@@ -355,6 +355,8 @@ bool RobotHardware::initialize(const RobotHardwareOptions& options) {
 
     mfr3duo_mujoco::SimulationOptions backend;
     backend.viewer_enabled = options.viewer_enabled;
+    for (const auto& joint : options.scene_joints)
+        backend.scene_joints.push_back({joint.joint_name, joint.lower, joint.upper});
     backend.initial_keyframe = options.initial_keyframe;
     for (const auto& mapping : options.grasp_objects)
         backend.grasp_objects.push_back(
@@ -362,9 +364,12 @@ bool RobotHardware::initialize(const RobotHardwareOptions& options) {
     backend.cameras_enabled = true;
     backend.lidars_enabled = true;
     backend.imu_enabled = true;
-    backend.camera_width = 320;
-    backend.camera_height = 180;
-    backend.camera_period = 0.04;
+    backend.cameras_on_demand = options.cameras_on_demand;
+    backend.camera_shadows = !options.cameras_on_demand;
+    backend.camera_width = options.cameras_on_demand ? 480 : 320;
+    backend.camera_height = options.cameras_on_demand ? 270 : 180;
+    // Integer physics ticks, with acquisition headroom for 30 FPS WebRTC.
+    backend.camera_period = options.cameras_on_demand ? 0.01 : 0.04;
     const bool initialized = options.model_path.empty()
                                  ? impl_->simulation.initialize(backend)
                                  : impl_->simulation.initialize(options.model_path, backend);
@@ -550,6 +555,25 @@ bool RobotHardware::read_state(Camera id, CameraFrame& frame) const {
     if (!impl_->simulation.read_state(backend_id, source)) return false;
     copy_camera_frame(source, frame);
     return true;
+}
+
+bool RobotHardware::set_camera_enabled(Camera id, bool enabled) {
+    if (impl_ == nullptr) return false;
+    mfr3duo_mujoco::Camera backend_id;
+    return backend_camera(id, backend_id) &&
+           impl_->simulation.set_camera_enabled(backend_id, enabled);
+}
+
+bool RobotHardware::read_scene_joint(const std::string& name, JointState& state) const {
+    if (impl_ == nullptr || !impl_->is_active()) return false;
+    mfr3duo_mujoco::JointState source;
+    if (!impl_->simulation.read_scene_joint(name, source)) return false;
+    state = {source.position, source.velocity, source.effort};
+    return true;
+}
+
+bool RobotHardware::command_scene_joint(const std::string& name, double position) {
+    return impl_ && impl_->is_active() && impl_->simulation.command_scene_joint(name, position);
 }
 
 }  // namespace mfr3duo_hardware

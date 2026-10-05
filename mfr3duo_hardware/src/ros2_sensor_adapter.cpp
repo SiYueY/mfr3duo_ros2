@@ -1,6 +1,7 @@
 #include "ros2_sensor_adapter.hpp"
 
 #include <array>
+#include <algorithm>
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
@@ -23,8 +24,37 @@ constexpr std::array<const char*, 14> kCameraNames{
 }  // namespace
 
 Ros2SensorAdapter::Ros2SensorAdapter(
-    RobotHardware& robot, const std::vector<SimulationObjectMapping>& objects)
-: robot_(robot), node_(std::make_shared<rclcpp::Node>("mfr3duo_sensor_adapter")) {
+    RobotHardware& robot, const std::vector<SimulationObjectMapping>& objects,
+    const std::vector<SceneJointMapping>& scene_joints)
+: robot_(robot),
+  node_(std::make_shared<rclcpp::Node>("mfr3duo_sensor_adapter")),
+  scene_joints_(scene_joints) {
+    if (!scene_joints_.empty()) {
+        scene_publisher_ = node_->create_publisher<sensor_msgs::msg::JointState>(
+            "/simulation/scene/joint_states", 10);
+        using Service = mfr3duo_msgs::srv::SceneJointCommand;
+        scene_command_ = node_->create_service<Service>(
+            "/simulation/scene/joint_command", [this](
+                                                   const Service::Request::SharedPtr request,
+                                                   const Service::Response::SharedPtr response) {
+                double target = request->position;
+                JointState current;
+                if (request->hold) {
+                    if (!robot_.read_scene_joint(request->joint_name, current)) {
+                        response->message = "Scene joint unavailable";
+                        return;
+                    }
+                    target = current.position;
+                    const auto mapping = std::find_if(
+                        scene_joints_.begin(), scene_joints_.end(),
+                        [&](const auto& joint) { return joint.joint_name == request->joint_name; });
+                    if (mapping == scene_joints_.end()) return;
+                    target = std::clamp(target, mapping->lower, mapping->upper);
+                }
+                response->success = robot_.command_scene_joint(request->joint_name, target);
+                if (!response->success) response->message = "Unknown joint or invalid target";
+            });
+    }
     const auto objects_root = node_->declare_parameter<std::string>(
         "perception.objects_topic_prefix", "/perception/objects");
     const auto tools_root =
@@ -86,15 +116,30 @@ void Ros2SensorAdapter::run() {
         // Re-anchor the robot clock on the coherent snapshot so stamps stay near
         // wall time when physics runs slower than real time.
         RobotState state;
+        bool motion_updated = false;
         if (robot_.read_state(state)) {
             if (state.sequence != motion_sequence_) {
                 motion_sequence_ = state.sequence;
                 motion_received_ = std::chrono::steady_clock::now();
+                motion_updated = true;
             }
             clock_epoch_ = node_->now() - rclcpp::Duration::from_nanoseconds(
                                               static_cast<std::int64_t>(state.timestamp_ns));
         }
         executor.spin_some();
+        if (scene_publisher_ && motion_updated) {
+            sensor_msgs::msg::JointState message;
+            message.header.stamp = node_->now();
+            for (const auto& joint : scene_joints_) {
+                JointState state;
+                if (!robot_.read_scene_joint(joint.joint_name, state)) continue;
+                message.name.push_back(joint.joint_name);
+                message.position.push_back(state.position);
+                message.velocity.push_back(state.velocity);
+                message.effort.push_back(state.effort);
+            }
+            if (!message.name.empty()) scene_publisher_->publish(message);
+        }
         publish_observations();
         PassiveJointStates passive_state;
         BasePoseState base_pose;
@@ -132,7 +177,15 @@ void Ros2SensorAdapter::run() {
             publish_lidar(static_cast<Lidar>(index), index);
         }
         for (std::size_t index = 0; index < kCameraNames.size(); ++index) {
-            publish_camera(static_cast<Camera>(index), index);
+            const bool demand = image_publishers_[index]->get_subscription_count() > 0;
+            if (demand != camera_enabled_[index] &&
+                robot_.set_camera_enabled(static_cast<Camera>(index), demand)) {
+                camera_enabled_[index] = demand;
+                RCLCPP_INFO(
+                    node_->get_logger(), "Camera %s acquisition %s", kCameraNames[index],
+                    demand ? "enabled" : "disabled");
+            }
+            if (demand) publish_camera(static_cast<Camera>(index), index);
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }

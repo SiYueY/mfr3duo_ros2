@@ -1,0 +1,10 @@
+free_thresh: 0.196
+image: kitchen.pgm
+mode: trinary
+negate: 0
+occupied_thresh: 0.65
+origin:
+- -1.2
+- -5.2
+- 0.0
+resolution: 0.025

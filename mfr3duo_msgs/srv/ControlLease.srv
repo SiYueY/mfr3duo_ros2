@@ -1,0 +1,10 @@
+# acquire / renew / release / stop / initialize. Deadlines use steady time.
+string command
+string authority_id
+string mode
+float64 ttl_s
+float64 timeout_s
+---
+bool success
+string error_code
+string message

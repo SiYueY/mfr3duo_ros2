@@ -8,6 +8,7 @@
 #include "mfr3duo_robot/pick_task.hpp"
 #include "mfr3duo_robot/place_task.hpp"
 #include "mfr3duo_robot/task_sequence.hpp"
+#include "mfr3duo_robot/scene_joint_task.hpp"
 namespace mfr3duo_robot {
 // Application spins the supplied node concurrently using a multithreaded executor.
 // Robot creates neither a thread nor an executor.

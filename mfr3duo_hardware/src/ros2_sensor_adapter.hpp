@@ -16,6 +16,7 @@
 #include "sensor_msgs/msg/image.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
+#include "mfr3duo_msgs/srv/scene_joint_command.hpp"
 
 namespace mfr3duo_hardware {
 
@@ -29,7 +30,8 @@ namespace mfr3duo_hardware {
 class Ros2SensorAdapter {
 public:
     explicit Ros2SensorAdapter(
-        RobotHardware& robot, const std::vector<SimulationObjectMapping>& objects = {});
+        RobotHardware& robot, const std::vector<SimulationObjectMapping>& objects = {},
+        const std::vector<SceneJointMapping>& scene_joints = {});
     ~Ros2SensorAdapter();
 
     Ros2SensorAdapter(const Ros2SensorAdapter&) = delete;
@@ -53,6 +55,9 @@ private:
     };
     void publish_observations();
     std::vector<ObservationPublishers> observation_publishers_;
+    std::vector<SceneJointMapping> scene_joints_;
+    rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr scene_publisher_;
+    rclcpp::Service<mfr3duo_msgs::srv::SceneJointCommand>::SharedPtr scene_command_;
     rclcpp::Time clock_epoch_{0, 0, RCL_ROS_TIME};
     std::uint64_t motion_sequence_{0};
     std::chrono::steady_clock::time_point motion_received_{};
@@ -64,6 +69,7 @@ private:
     std::array<rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr, 14> info_publishers_;
     std::array<std::uint64_t, 2> lidar_sequences_{};
     std::array<std::uint64_t, 14> camera_sequences_{};
+    std::array<bool, 14> camera_enabled_{};
     std::atomic<bool> running_{false};
     std::thread thread_;
 };

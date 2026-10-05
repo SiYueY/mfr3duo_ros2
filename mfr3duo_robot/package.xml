@@ -10,6 +10,8 @@
   <depend>mfr3duo_control</depend>
   <depend>sensor_msgs</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>mfr3duo_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>ament_index_cpp</depend>
   <depend>tf2_ros</depend>
@@ -17,6 +19,7 @@
   <depend>mfr3duo_moveit</depend>
   <depend>mfr3duo_nav</depend>
   <exec_depend>nav2_common</exec_depend>
+  <exec_depend>mfr3duo_scenes</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
   <exec_depend>ament_index_python</exec_depend>

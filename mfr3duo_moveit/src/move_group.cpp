@@ -591,12 +591,27 @@ struct MoveGroup::Impl {
                 if (!solver) return error(ErrorCode::IKFailed, "IK plugin unavailable");
                 std::vector<double> seed;
                 output.copyJointGroupPositions(chain, seed);
-                if (trial)
-                    for (std::size_t j = 0; j < seed.size(); ++j) {
-                        const auto& bounds = model->getVariableBounds(chain->getVariableNames()[j]);
-                        seed[j] = std::uniform_real_distribution<double>(
-                            bounds.min_position_, bounds.max_position_)(random);
-                    }
+                for (std::size_t j = 0; j < seed.size(); ++j) {
+                    const auto& name = chain->getVariableNames()[j];
+                    const auto& bounds = model->getVariableBounds(name);
+                    double lower = bounds.min_position_, upper = bounds.max_position_;
+                    for (const auto& constraint : constraints.joint_constraints)
+                        if (constraint.joint_name == name) {
+                            lower =
+                                std::max(lower, constraint.position - constraint.tolerance_below);
+                            upper =
+                                std::min(upper, constraint.position + constraint.tolerance_above);
+                            if (!trial) seed[j] = constraint.position;
+                        }
+                    if (lower > upper)
+                        return error(
+                            ErrorCode::InvalidConstraint,
+                            "joint constraint outside mechanical limits");
+                    if (trial)
+                        seed[j] = std::uniform_real_distribution<double>(lower, upper)(random);
+                    else
+                        seed[j] = std::clamp(seed[j], lower, upper);
+                }
                 auto target_pose = entry.second;
                 if (trial && std::holds_alternative<Point>(targets.at(entry.first))) {
                     std::normal_distribution<double> normal;
@@ -1301,8 +1316,19 @@ Result MoveGroup::plan(Plan& output) {
         if (!success || response.error_code_.val != response.error_code_.SUCCESS ||
             !response.trajectory_)
             return mapped(response.error_code_.val, ErrorCode::PathPlanningFailed);
-        if (!scene->isStateConstrained(response.trajectory_->getLastWayPoint(), merged))
-            return error(ErrorCode::GoalSamplingFailed, "planned endpoint violates AND goal");
+        if (!scene->isStateConstrained(response.trajectory_->getLastWayPoint(), merged)) {
+            std::ostringstream diagnostic;
+            diagnostic << "planned endpoint violates AND goal";
+            const auto& endpoint = response.trajectory_->getLastWayPoint();
+            for (const auto& joint : merged.joint_constraints) {
+                const double actual = endpoint.getVariablePosition(joint.joint_name);
+                if (actual < joint.position - joint.tolerance_below ||
+                    actual > joint.position + joint.tolerance_above)
+                    diagnostic << "; " << joint.joint_name << " actual=" << actual
+                               << " target=" << joint.position;
+            }
+            return error(ErrorCode::GoalSamplingFailed, diagnostic.str());
+        }
         for (std::size_t i = 0; i < response.trajectory_->getWayPointCount(); ++i) {
             const auto& state = response.trajectory_->getWayPoint(i);
             if (!state.satisfiesBounds() || !scene->isStateValid(state, impl_->constraints, ""))
@@ -1438,9 +1464,18 @@ Result MoveGroup::execute(const Plan& plan) {
             }
             moveit::core::RobotStatePtr actual;
             observation = impl_->current(actual);
-            if (observation && !scene->isStateValid(*actual))
-                observation =
-                    error(ErrorCode::ExecutionFailed, "measured execution collision/bounds");
+            if (observation && !scene->isStateValid(*actual)) {
+                collision_detection::CollisionRequest request;
+                collision_detection::CollisionResult collision;
+                request.contacts = true;
+                request.max_contacts = 8;
+                scene->checkCollision(request, collision, *actual);
+                std::ostringstream diagnostic;
+                diagnostic << "measured execution collision/bounds";
+                for (const auto& contact : collision.contacts)
+                    diagnostic << "; " << contact.first.first << " / " << contact.first.second;
+                observation = error(ErrorCode::ExecutionFailed, diagnostic.str());
+            }
             if (observation)
                 for (const auto& joint :
                      impl_->model->getJointModelGroup("dual_arm_spine")->getVariableNames())
@@ -1556,8 +1591,9 @@ Result MoveGroup::compute_cartesian_path(
         std::vector<moveit::core::RobotStatePtr> states;
         auto state = *start;
         const auto cartesian_deadline = impl_->after(impl_->planning_time);
+        std::string invalid_sample;
         const auto valid = [scene, constraints = impl_->constraints, before = *start,
-                            cartesian_deadline](
+                            cartesian_deadline, &invalid_sample](
                                moveit::core::RobotState* candidate,
                                const moveit::core::JointModelGroup* selected,
                                const double* values) {
@@ -1570,7 +1606,22 @@ Result MoveGroup::compute_cartesian_path(
                                                           candidate->getVariablePosition(name) -
                                                           before.getVariablePosition(name)) > 1e-12)
                     return false;
-            return candidate->satisfiesBounds() && scene->isStateValid(*candidate, constraints, "");
+            if (!candidate->satisfiesBounds()) {
+                invalid_sample = "joint bounds";
+                return false;
+            }
+            if (!scene->isStateValid(*candidate, constraints, "")) {
+                collision_detection::CollisionRequest request;
+                collision_detection::CollisionResult collisions;
+                request.contacts = true;
+                request.max_contacts = 8;
+                scene->checkCollision(request, collisions, *candidate);
+                invalid_sample = "collision or constraints";
+                for (const auto& contact : collisions.contacts)
+                    invalid_sample += "; " + contact.first.first + " / " + contact.first.second;
+                return false;
+            }
+            return true;
         };
         auto previous_pose = start->getGlobalLinkTransform(kTips[side]);
         for (const auto& waypoint : transformed) {
@@ -1592,9 +1643,13 @@ Result MoveGroup::compute_cartesian_path(
             return error(ErrorCode::PlanningTimeout, "Cartesian computation deadline");
         if (!std::isfinite(fraction) || states.empty())
             return error(ErrorCode::PathPlanningFailed, "Cartesian computation failed");
+        if (fraction < 1.)
+            RCLCPP_WARN(
+                impl_->node->get_logger(), "Partial Cartesian path %.4f: %s", fraction,
+                invalid_sample.empty() ? "IK or jump limit" : invalid_sample.c_str());
         robot_trajectory::RobotTrajectory path(impl_->model, kGroups[side]);
         for (const auto& point : states) path.addSuffixWayPoint(*point, 0);
-        trajectory_processing::TimeOptimalTrajectoryGeneration timing;
+        trajectory_processing::TimeOptimalTrajectoryGeneration timing(.001, .1, 1e-6);
         if (!timing.computeTimeStamps(path, impl_->velocity, impl_->acceleration))
             return error(ErrorCode::PathPlanningFailed, "Cartesian time parameterization failed");
         // TOTG resamples geometry; check its output again rather than trusting IK alone.

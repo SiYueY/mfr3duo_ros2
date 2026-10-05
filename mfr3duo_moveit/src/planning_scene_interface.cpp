@@ -555,7 +555,8 @@ Result PlanningSceneInterface::set_grasp_contact_allowed(
     for (const auto& link : links) {
         collision_detection::AllowedCollision::Type type =
             collision_detection::AllowedCollision::NEVER;
-        if (!confirmed.getAllowedCollision(id, link, type) ||
+        confirmed.getAllowedCollision(id, link, type);
+        if (type == collision_detection::AllowedCollision::CONDITIONAL ||
             (type == collision_detection::AllowedCollision::ALWAYS) !=
                 (allowed || attached ? true : previous.at(link)))
             return error(ErrorCode::ExecutionFailed, "contact rule not confirmed");
