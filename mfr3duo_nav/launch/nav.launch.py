@@ -32,7 +32,10 @@ def generate_launch_description():
             launch_arguments={key: LaunchConfiguration(key) for key in
                               ('viewer_enabled', 'controller_update_rate', 'model_path')}.items()),
         GroupAction([
-            # Humble navigation_launch connects controller -> velocity_smoother.
+            # Humble navigation_launch sends controller output to cmd_vel_nav,
+            # where velocity_smoother receives it. Behaviors such as Spin also
+            # publish cmd_vel, so route both sources through that same input.
+            SetRemap(src='cmd_vel', dst='cmd_vel_nav'),
             # Only the smoother's final output reaches the TMR controller.
             SetRemap(src='cmd_vel_smoothed', dst='/tmr_controller/cmd_vel'),
             IncludeLaunchDescription(

@@ -366,8 +366,12 @@ bool RobotHardware::initialize(const RobotHardwareOptions& options) {
     backend.imu_enabled = true;
     backend.cameras_on_demand = options.cameras_on_demand;
     backend.camera_shadows = !options.cameras_on_demand;
-    backend.camera_width = options.cameras_on_demand ? 480 : 320;
-    backend.camera_height = options.cameras_on_demand ? 270 : 180;
+    // On-demand cameras feed roserver/WebRTC and the semantic-vision path.
+    // Preserve the native 16:9 720p render size so that a snapshot is useful
+    // for object and support-surface detection instead of being downsampled
+    // before it reaches either consumer.
+    backend.camera_width = options.cameras_on_demand ? 1280 : 320;
+    backend.camera_height = options.cameras_on_demand ? 720 : 180;
     // Integer physics ticks, with acquisition headroom for 30 FPS WebRTC.
     backend.camera_period = options.cameras_on_demand ? 0.01 : 0.04;
     const bool initialized = options.model_path.empty()

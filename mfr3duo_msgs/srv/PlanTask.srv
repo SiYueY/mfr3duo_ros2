@@ -1,0 +1,8 @@
+# A no-motion feasibility check using fresh robot state and the active
+# collision scene.  The server must not command an actuator for this request.
+TaskStep step
+---
+bool feasible
+uint8 selected_manipulator
+string error_code
+string message

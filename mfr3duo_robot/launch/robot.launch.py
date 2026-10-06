@@ -43,7 +43,10 @@ def setup(context):
                             'robot.transit_acceleration_scaling': 0.10,
                             'robot.gripper_open_width': 0.078,
                             'robot.grasp_spine_height': 0.25,
-                            'robot.pregrasp_spine_first': True,
+                            # Pick preflight plans the arm and spine as one collision-checked
+                            # trajectory.  Execute the same trajectory so a feasible plan is
+                            # a valid predictor of the physical pregrasp motion.
+                            'robot.pregrasp_spine_first': False,
                             'execution.timeout_margin': 15.0,
                             'navigator.localization_node': ('simulation_localization'
                                 if localization == 'simulation_ground_truth' else 'amcl'),

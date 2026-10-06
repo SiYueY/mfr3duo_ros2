@@ -7,7 +7,7 @@ find_package(std_msgs REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/GraspEpsilon.msg" "msg/TaskStep.msg" "msg/RobotStatus.msg"
   "action/Move.action" "action/Grasp.action" "action/ExecuteTask.action"
-  "srv/ControlLease.srv" "srv/SceneJointCommand.srv" DEPENDENCIES geometry_msgs std_msgs)
+  "srv/ControlLease.srv" "srv/SceneJointCommand.srv" "srv/PlanTask.srv" DEPENDENCIES geometry_msgs std_msgs)
 ament_export_dependencies(rosidl_default_runtime)
 install(FILES LICENSE NOTICE.md README.md upstream.json DESTINATION share/${PROJECT_NAME})
 if(BUILD_TESTING)

@@ -49,7 +49,8 @@ class LocalizationTests(unittest.TestCase):
         close.pose.pose, distant.pose.pose = pose(.7, -.3, -.2), pose(5, 5, .9)
         clock = SimpleNamespace(nanoseconds=10_000_000_000, to_msg=Mock(return_value=measured.header.stamp))
         fake = SimpleNamespace(active=True, measured=measured, odometry=[distant, close],
-            physics_received=20., get_clock=lambda: SimpleNamespace(now=lambda: clock), broadcaster=Mock())
+            physics_received=20., odometry_received=20., measured_received=20.,
+            get_clock=lambda: SimpleNamespace(now=lambda: clock), broadcaster=Mock())
         with patch.object(module.time, 'monotonic', return_value=20.):
             module.SimulationLocalization.publish(fake)
             transform = fake.broadcaster.sendTransform.call_args.args[0]
@@ -57,7 +58,9 @@ class LocalizationTests(unittest.TestCase):
             self.assertAlmostEqual(transform.transform.translation.x, expected[0])
             self.assertEqual(transform.header.frame_id, 'map')
             self.assertEqual(transform.child_frame_id, 'odom')
-            for key, value in [('active', False), ('physics_received', 19.), ('odometry', [distant])]:
+            for key, value in [('active', False), ('physics_received', 19.),
+                               ('odometry_received', 19.), ('measured_received', 19.),
+                               ('odometry', [distant])]:
                 original = getattr(fake, key)
                 setattr(fake, key, value)
                 fake.broadcaster.reset_mock()

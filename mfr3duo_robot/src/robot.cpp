@@ -1,6 +1,7 @@
 #include "mfr3duo_robot/robot.hpp"
 #include <atomic>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <condition_variable>
 #include <functional>
@@ -283,10 +284,14 @@ struct Robot::Impl {
                 if (id == held_id && obs.valid && obs.object_visible) {
                     const auto relative =
                         transform(obs.tool_pose.pose).inverse() * transform(obs.object_pose.pose);
+                    // Pick validates its lift with the tighter 5 mm / 0.05 rad bounds.
+                    // Once idle, compliant grippers can settle slightly while still holding
+                    // the object.  Keep a bounded, independent holding envelope instead of
+                    // turning that known physical settling into a recovery fault.
                     healthy = healthy && grasp_verified && width_matches(id, hand) &&
-                              (relative.translation() - reference.translation()).norm() <= .005 &&
+                              (relative.translation() - reference.translation()).norm() <= .015 &&
                               Eigen::AngleAxisd(relative.linear() * reference.linear().transpose())
-                                      .angle() <= .05;
+                                      .angle() <= .10;
                 }
             }
             observer_healthy = healthy;
@@ -964,6 +969,13 @@ struct Robot::Impl {
                                     .angle()));
                 std::this_thread::sleep_for(20ms);
             }
+            // The arm has moved while carrying the object.  Keep the physical baseline
+            // used by the idle health monitor and the subsequent PlaceTask in the same
+            // settled, post-lift measurement frame.  Retaining the pre-lift transform
+            // makes a successful Pick immediately look like a held-object drift when
+            // the compliant simulated/physical gripper settles after the lift.
+            held_relative =
+                transform(obs.tool_pose.pose).inverse() * transform(obs.object_pose.pose);
             grasp_verified = true;
             RCLCPP_INFO(
                 node->get_logger(),
@@ -1066,6 +1078,61 @@ struct Robot::Impl {
             holding_hand = Manipulator::Auto;
             relative_known = false;
             grasp_verified = false;
+        }
+        Robot::PreflightResult preflight_pick(const PickTask& task) {
+            Robot::PreflightResult result;
+            std::string last_error;
+            for (const auto hand : std::array<Manipulator, 2>{Manipulator::Left, Manipulator::Right}) {
+                if (task.manipulator() != Manipulator::Auto && task.manipulator() != hand) continue;
+                try {
+                    refresh_environment(hand);
+                    const auto obs = observe(task.object_id(), hand);
+                    require(scene.add_collision_objects({support_geometry(obs, hand), geometry(task.object_id(), obs, hand)}),
+                            TaskError::PlanningFailed, "preflight collision scene");
+                    auto grasp = task.grasp_pose() ? world_pose(*task.grasp_pose(), obs) : transform(obs.object_pose.pose);
+                    if (!task.grasp_pose()) {
+                        grasp.translation().z() += grasp_offset;
+                        grasp.linear() = Eigen::AngleAxisd(3.14159265358979323846, Eigen::Vector3d::UnitX()).toRotationMatrix();
+                    }
+                    grasp.translation().z() += pregrasp;
+                    reset_builder();
+                    require(move.add_group(arm(hand)), TaskError::PlanningFailed, "preflight arm group");
+                    require(move.add_group(Group::Spine), TaskError::PlanningFailed, "preflight spine group");
+                    require(move.add_joint_position_target(Group::Spine, grasp_height), TaskError::PlanningFailed, "preflight spine target");
+                    if (const auto limits = profile["fixture"]["pregrasp_joint_constraints"]) {
+                        moveit_msgs::msg::Constraints constraints;
+                        for (const auto& entry : limits) {
+                            const auto values = entry.second.as<std::vector<double>>();
+                            if (values.size() != 2)
+                                throw StepFailure(TaskError::InvalidTask,
+                                                  "invalid pregrasp joint constraint");
+                            moveit_msgs::msg::JointConstraint joint;
+                            joint.joint_name = std::string(hand == Manipulator::Left ? "left_" : "right_") +
+                                              "fr3v2_1_" + entry.first.as<std::string>();
+                            joint.position = values[0];
+                            joint.tolerance_above = joint.tolerance_below = values[1];
+                            joint.weight = 1.;
+                            constraints.joint_constraints.push_back(joint);
+                        }
+                        require(move.add_path_constraint(constraints), TaskError::PlanningFailed,
+                                "preflight joint constraints");
+                    }
+                    require(move.add_pose_target(arm(hand), relative(obs, grasp, hand)), TaskError::PlanningFailed, "preflight target");
+                    require(move.set_max_velocity_scaling_factor(transit_velocity), TaskError::PlanningFailed, "preflight velocity");
+                    require(move.set_max_acceleration_scaling_factor(transit_acceleration), TaskError::PlanningFailed, "preflight acceleration");
+                    mfr3duo_moveit::Plan plan;
+                    require(move.plan(plan), TaskError::PlanningFailed, "pregrasp plan");
+                    result.feasible = true;
+                    result.manipulator = hand;
+                    result.message = "collision-aware pregrasp plan found";
+                    return result;
+                } catch (const StepFailure& error) {
+                    last_error = error.what();
+                }
+            }
+            result.error = TaskError::PlanningFailed;
+            result.message = last_error.empty() ? "no manipulator candidate" : last_error;
+            return result;
         }
         void run_task(const RobotTask& task, const std::shared_ptr<TaskHandle::Impl>& op) {
             Clock::time_point previous;
@@ -1475,6 +1542,20 @@ TaskResult Robot::execute(const RobotTask& task) {
     } catch (const std::exception& error) {
         return failure(TaskError::InvalidTask, std::string("Task clone: ") + error.what());
     }
+}
+Robot::PreflightResult Robot::preflight(const RobotTask& task) {
+    auto e = impl_->engine;
+    std::lock_guard<std::mutex> serial(e->cancellation_mutex);
+    std::lock_guard<std::mutex> lock(e->mutex);
+    if (e->live || e->initializing)
+        return {false, Manipulator::Auto, TaskError::RobotBusy, "robot is busy"};
+    if (e->closing || e->state != RobotState::Ready || !e->ready())
+        return {false, Manipulator::Auto, TaskError::RobotNotReady, "robot is not ready"};
+    if (!e->validate(task))
+        return {false, Manipulator::Auto, TaskError::InvalidTask, "invalid/unsupported task input"};
+    if (const auto* pick = dynamic_cast<const PickTask*>(&task)) return e->preflight_pick(*pick);
+    return {false, Manipulator::Auto, TaskError::InvalidTask,
+            "preflight currently requires one PickTask"};
 }
 TaskResult Robot::cancel() {
     std::shared_ptr<TaskHandle::Impl> op;

@@ -9,6 +9,7 @@
 #include <mfr3duo_msgs/action/execute_task.hpp>
 #include <mfr3duo_msgs/msg/robot_status.hpp>
 #include <mfr3duo_msgs/srv/control_lease.hpp>
+#include <mfr3duo_msgs/srv/plan_task.hpp>
 #include "mfr3duo_robot/robot.hpp"
 
 namespace mfr3duo_robot {
@@ -18,6 +19,7 @@ class TaskServer {
     using Action = mfr3duo_msgs::action::ExecuteTask;
     using Goal = rclcpp_action::ServerGoalHandle<Action>;
     using Lease = mfr3duo_msgs::srv::ControlLease;
+    using PlanTask = mfr3duo_msgs::srv::PlanTask;
     using Clock = std::chrono::steady_clock;
 
 public:
@@ -30,6 +32,10 @@ public:
             [this](
                 const Lease::Request::SharedPtr request,
                 const Lease::Response::SharedPtr response) { command(*request, *response); });
+        plan_ = node_->create_service<PlanTask>(
+            "/robot/plan_task",
+            [this](const PlanTask::Request::SharedPtr request,
+                   const PlanTask::Response::SharedPtr response) { plan(*request, *response); });
         action_ = rclcpp_action::create_server<Action>(
             node_, "/robot/execute_task",
             [this](const rclcpp_action::GoalUUID&, std::shared_ptr<const Action::Goal> goal) {
@@ -199,6 +205,31 @@ private:
         result->set_timeout(duration(step.timeout_s));
         return result;
     }
+    void plan(const PlanTask::Request& request, PlanTask::Response& response) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (busy_ || !robot_.is_ready()) {
+            response.error_code = busy_ ? "control_authority_conflict" : "robot_not_ready";
+            response.message = busy_ ? "Robot is busy" : "Robot is not ready";
+            return;
+        }
+        if (request.step.kind != "pick" || request.step.object_id.empty() ||
+            request.step.manipulator > 2 || !duration_valid(request.step.timeout_s)) {
+            response.error_code = "invalid_input";
+            response.message = "PlanTask currently requires one valid pick step";
+            return;
+        }
+        try {
+            auto planned = task(request.step);
+            const auto result = robot_.preflight(*planned);
+            response.feasible = result.feasible;
+            response.selected_manipulator = static_cast<std::uint8_t>(result.manipulator);
+            response.error_code = result.feasible ? "" : error_code(result.error);
+            response.message = result.message;
+        } catch (const std::exception& error) {
+            response.error_code = "robot_execution_failed";
+            response.message = error.what();
+        }
+    }
     void execute(const std::shared_ptr<Goal>& goal) noexcept {
         auto response = std::make_shared<Action::Result>();
         try {
@@ -281,6 +312,7 @@ private:
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr velocity_;
     rclcpp::Publisher<mfr3duo_msgs::msg::RobotStatus>::SharedPtr status_;
     rclcpp::Service<Lease>::SharedPtr lease_;
+    rclcpp::Service<PlanTask>::SharedPtr plan_;
     rclcpp_action::Server<Action>::SharedPtr action_;
     rclcpp::TimerBase::SharedPtr timer_;
 };

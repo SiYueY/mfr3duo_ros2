@@ -2,6 +2,7 @@
 #include <chrono>
 #include <memory>
 #include <optional>
+#include <string>
 #include <rclcpp/node.hpp>
 #include "mfr3duo_robot/task_handle.hpp"
 #include "mfr3duo_robot/navigate_task.hpp"
@@ -14,6 +15,12 @@ namespace mfr3duo_robot {
 // Robot creates neither a thread nor an executor.
 class Robot {
 public:
+    struct PreflightResult {
+        bool feasible{false};
+        Manipulator manipulator{Manipulator::Auto};
+        TaskError error{TaskError::None};
+        std::string message;
+    };
     explicit Robot(const rclcpp::Node::SharedPtr& node);
     ~Robot();
     Robot(const Robot&) = delete;
@@ -24,6 +31,9 @@ public:
     RobotState state() const;
     bool is_ready() const;
     bool is_busy() const;
+    // Runs collision-aware planning against fresh measured state without
+    // sending a base, arm, spine or gripper command.
+    PreflightResult preflight(const RobotTask& task);
     TaskResult execute(const RobotTask& task);
     TaskHandle start(std::unique_ptr<RobotTask> task);
     TaskResult cancel();

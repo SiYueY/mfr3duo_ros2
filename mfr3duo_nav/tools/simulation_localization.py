@@ -41,6 +41,8 @@ class SimulationLocalization(LifecycleNode):
         self.measured = None
         self.physics_time = None
         self.physics_received = 0.
+        self.odometry_received = 0.
+        self.measured_received = 0.
         self.active = False
         self.broadcaster = TransformBroadcaster(self)
         self.create_subscription(Odometry, '/tmr_controller/odom', self.on_odom, 10)
@@ -64,6 +66,8 @@ class SimulationLocalization(LifecycleNode):
         self.measured = None
         self.physics_time = None
         self.physics_received = 0.
+        self.odometry_received = 0.
+        self.measured_received = 0.
         return super().on_cleanup(state)
 
     def on_shutdown(self, state):
@@ -73,10 +77,12 @@ class SimulationLocalization(LifecycleNode):
     def on_odom(self, message):
         if message.header.frame_id == 'odom' and message.child_frame_id == 'base_link' and valid_pose(message.pose.pose):
             self.odometry.append(message)
+            self.odometry_received = time.monotonic()
 
     def on_pose(self, message):
         if message.header.frame_id == 'simulation_world' and valid_pose(message.pose):
             self.measured = message
+            self.measured_received = time.monotonic()
 
     def on_time(self, message):
         value = message.time_ref.sec * 1000000000 + message.time_ref.nanosec
@@ -85,13 +91,20 @@ class SimulationLocalization(LifecycleNode):
             self.physics_received = time.monotonic()
 
     def publish(self):
-        if not self.active or self.measured is None or not self.odometry or time.monotonic() - self.physics_received > .25:
+        received = time.monotonic()
+        if (not self.active or self.measured is None or not self.odometry or
+                received - self.physics_received > .5 or
+                received - self.odometry_received > .5 or
+                received - self.measured_received > .5):
             return
         now = self.get_clock().now()
         measured_stamp = stamp(self.measured)
         age = now.nanoseconds * 1e-9 - measured_stamp
         odometry = min(self.odometry, key=lambda value: abs(stamp(value) - measured_stamp))
-        if age < -.1 or age > .25 or abs(stamp(odometry) - measured_stamp) > .03:
+        # The controller and simulation-pose publisher use separate executors.
+        # Thirty milliseconds is too strict under scheduler jitter and can let
+        # map -> odom disappear from TF despite both sources remaining live.
+        if age < -.1 or age > .5 or abs(stamp(odometry) - measured_stamp) > .1:
             return
         x, y, angle = correction(self.measured.pose, odometry.pose.pose)
         if not all(math.isfinite(value) for value in (x, y, angle)):
